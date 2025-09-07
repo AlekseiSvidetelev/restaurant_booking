@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">Управление пользователями</h1>
+
+    <div class="card shadow-lg">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                    <tr>
+                        <th scope="col" style="width: 5%;">ID</th>
+                        <th scope="col" style="width: 25%;">Email</th>
+                        <th scope="col" style="width: 35%;">Имя</th>
+                        <th scope="col" style="width: 10%;">Активен</th>
+                        <th scope="col" style="width: 25%;">Действия</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.first_name }} {{ user.last_name }}</td>
+                        <td>
+                            {% if user.is_active %}
+                            <span class="badge bg-success">Да</span>
+                            {% else %}
+                            <span class="badge bg-danger">Нет</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if user.is_active is True and user.is_superuser is False %}
+                            <form method="post" action="{% url 'users:user_list' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="user_id" value="{{ user.id }}">
+
+                                {% if not user.is_blocked %}
+                                <button type="submit" name="action" value="block"
+                                        class="btn btn-sm btn-danger"
+                                        onclick="return confirm('Заблокировать пользователя?')">
+                                    <i class="bi bi-lock"></i> Блокировать
+                                </button>
+                                {% else %}
+                                <button type="submit" name="action" value="unblock"
+                                        class="btn btn-sm btn-success"
+                                        onclick="return confirm('Разблокировать пользователя?')">
+                                    <i class="bi bi-unlock"></i> Разблокировать
+                                </button>
+                                {% endif %}
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">Нет пользователей</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-danger m-5 p-4 shadow">
+                <h4 class="card-title text-center mb-4">
+                    <i class="bi bi-door-open fs-1 text-danger"></i><br>
+                    Выход из системы
+                </h4>
+
+                <p class="card-text text-center fw-bold text-danger fs-5">
+                    Вы уверены, что хотите выйти из аккаунта?
+                </p>
+
+                <form method="post" action="{% url 'users:logout' %}">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-lg btn-danger py-3">
+                            <i class="bi bi-box-arrow-right me-2"></i>Да, выйти
+                        </button>
+
+                        <a href="{% url 'mailings:home' %}" class="btn btn-lg btn-outline-primary py-3">
+                            <i class="bi bi-person-check me-2"></i>Нет, остаться
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

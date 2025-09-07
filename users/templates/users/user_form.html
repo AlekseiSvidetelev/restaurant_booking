@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block container %}
+<div class="container">
+    <form class="row" method="post" enctype="multipart/form-data">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Регистрация</h4>
+                </div>
+                <div class="card-body">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    {{ form.as_p }}
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary mt-3">
+                        Зарегистрироваться
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
