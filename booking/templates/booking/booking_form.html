@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card login-card">
+                <div class="card-header text-white text-center">
+                    <h4 class="mb-0">
+                        <i class="bi bi-calendar-plus me-2"></i>
+                        {% if object %}Редактирование бронирования{% else %}Создание бронирования{% endif %}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <!-- Поле выбора даты с календарем -->
+                        <div class="mb-4">
+                            <label for="reservation_date" class="form-label text-white">
+                                <i class="bi bi-calendar-event me-2"></i>Дата бронирования
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-restaurant-primary text-white">
+                                    <i class="bi bi-calendar"></i>
+                                </span>
+                                <input
+                                    type="text"
+                                    name="reservation_date"
+                                    id="reservation_date"
+                                    class="form-control flatpickr"
+                                    placeholder="Выберите дату"
+                                    value="{{ form.reservation_date.value|default:'' }}"
+                                    required
+                                >
+                            </div>
+                            {% if form.reservation_date.errors %}
+                            <div class="text-danger mt-1">
+                                {{ form.reservation_date.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Поле выбора количества гостей -->
+                        <div class="mb-4">
+                            <label for="guests_count" class="form-label text-white">
+                                <i class="bi bi-people me-2"></i>Количество гостей
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-restaurant-primary text-white">
+                                    <i class="bi bi-person"></i>
+                                </span>
+                                <input
+                                    type="number"
+                                    name="guests_count"
+                                    id="guests_count"
+                                    class="form-control"
+                                    min="1"
+                                    max="20"
+                                    value="{{ form.guests_count.value|default:'' }}"
+                                    placeholder="Введите количество гостей"
+                                    required
+                                >
+                            </div>
+                            {% if form.guests_count.errors %}
+                            <div class="text-danger mt-1">
+                                {{ form.guests_count.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Поле выбора длительности -->
+                        <div class="mb-4">
+                            <label for="duration" class="form-label text-white">
+                                <i class="bi bi-clock me-2"></i>Длительность (часы)
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-restaurant-primary text-white">
+                                    <i class="bi bi-hourglass"></i>
+                                </span>
+                                <select name="duration" id="duration" class="form-select" required>
+                                    <option value="">Выберите длительность</option>
+                                    <option value="1" {% if form.duration.value == 1 %}selected{% endif %}>1 час</option>
+                                    <option value="2" {% if form.duration.value == 2 %}selected{% endif %}>2 часа</option>
+                                    <option value="3" {% if form.duration.value == 3 %}selected{% endif %}>3 часа</option>
+                                    <option value="4" {% if form.duration.value == 4 %}selected{% endif %}>4 часа</option>
+                                    <option value="5" {% if form.duration.value == 5 %}selected{% endif %}>5+ часов</option>
+                                </select>
+                            </div>
+                            {% if form.duration.errors %}
+                            <div class="text-danger mt-1">
+                                {{ form.duration.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary py-2">
+                                <i class="bi bi-check-circle me-2"></i>Сохранить
+                            </button>
+                            {% if object %}
+                            <a href="{% url 'booking:booking_detail' object.id %}" class="btn btn-outline-secondary py-2">
+                                <i class="bi bi-x-circle me-2"></i>Отмена
+                            </a>
+                            {% else %}
+                            <a href="{% url 'booking:booking_list' %}" class="btn btn-outline-secondary py-2">
+                                <i class="bi bi-x-circle me-2"></i>Отмена
+                            </a>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Инициализация календаря
+        flatpickr("#reservation_date", {
+            locale: "ru",
+            minDate: "today",
+            dateFormat: "Y-m-d",
+            disableMobile: true,
+            onChange: function(selectedDates, dateStr, instance) {
+                // Дополнительные действия при выборе даты
+            }
+        });
+    });
+</script>
+{% endblock %}

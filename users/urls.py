@@ -20,7 +20,7 @@ urlpatterns = [
     path("register/", UserCreateView.as_view(), name="register"),
     path("login/", LoginView.as_view(template_name="users/login.html"), name="login"),
     path("logout_confirm/", LoginView.as_view(template_name="users/logout_confirm.html"), name="logout_confirm"),
-    path("logout/", LogoutView.as_view(next_page="mailings:home"), name="logout"),
+    path("logout/", LogoutView.as_view(next_page="booking:home"), name="logout"),
     path("email_confirm/<str:token>/", email_verification, name="email_confirm"),
     path("password_reset_request/", CustomPasswordResetRequestView.as_view(), name="password_reset_request"),
     path(

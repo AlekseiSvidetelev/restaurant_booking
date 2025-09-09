@@ -1,0 +1,258 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="hero-section py-5 mb-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-10 mx-auto">
+                <h1 class="display-4 fw-bold text-white mb-4 animate__animated animate__fadeInDown text-center">
+                    Добро пожаловать в ресторан "Гурман"
+                </h1>
+                <p class="lead text-white mb-4 animate__animated animate__fadeIn animate__delay-1s text-center">
+                    Насладитесь изысканной кухней от нашего шеф-повара в уютной атмосфере.
+                    Идеальное место для романтических ужинов, семейных праздников и деловых встреч.
+                </p>
+                <div class="d-flex justify-content-center mt-5">
+                    <div class="animate__animated animate__fadeIn animate__delay-2s">
+                        <a href="#reservation" class="btn btn-book-table btn-lg me-3 mb-3">
+                            <i class="bi bi-calendar-check me-2"></i>Забронировать столик
+                        </a>
+                        <a href="#menu" class="btn btn-outline-light btn-lg mb-3">
+                            <i class="bi bi-journal-text me-2"></i>Посмотреть меню
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- О ресторане -->
+<section class="about-section py-5 mb-5">
+    <div class="container">
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8 text-center">
+                <h2 class="display-5 fw-bold mb-4">О нашем ресторане</h2>
+                <p class="lead text-white">Ресторан "Гурман" — это место, где встречаются изысканный вкус, уютная атмосфера и
+                    безупречный сервис.</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card card-hover text-center h-100 border-0">
+                    <div class="card-body p-4">
+                        <div class="bg-restaurant-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                             style="width: 80px; height: 80px;">
+                            <i class="bi bi-egg-fried fs-1 text-white"></i>
+                        </div>
+                        <h4 class="card-title">Авторская кухня</h4>
+                        <p class="card-text">Наш шеф-повар создает уникальные блюда, сочетающие традиционные рецепты и
+                            современные тенденции.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card card-hover text-center h-100 border-0">
+                    <div class="card-body p-4">
+                        <div class="bg-restaurant-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                             style="width: 80px; height: 80px;">
+                            <i class="bi bi-wine-glass fs-1 text-white"></i>
+                        </div>
+                        <h4 class="card-title">Винная карта</h4>
+                        <p class="card-text">Широкий выбор premium-вин от лучших производителей мира к каждому
+                            блюду.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card card-hover text-center h-100 border-0">
+                    <div class="card-body p-4">
+                        <div class="bg-restaurant-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                             style="width: 80px; height: 80px;">
+                            <i class="bi bi-music-note-beamed fs-1 text-white"></i>
+                        </div>
+                        <h4 class="card-title">Живая музыка</h4>
+                        <p class="card-text">По вечерам в нашем ресторане играет живая музыка, создающая особую
+                            атмосферу.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Контакты -->
+<section class="contact-section py-5 mb-5">
+    <div class="container">
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8 text-center">
+                <h2 class="display-5 fw-bold mb-4">Контактная информация</h2>
+                <p class="lead text-white">Мы всегда рады видеть вас в нашем ресторане</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card card-hover text-center h-100 border-0">
+                    <div class="card-body p-4">
+                        <div class="bg-restaurant-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                             style="width: 80px; height: 80px;">
+                            <i class="bi bi-geo-alt fs-1 text-white"></i>
+                        </div>
+                        <h4 class="card-title">Адрес</h4>
+                        <p class="card-text">ул. Гастрономическая, 24<br>Москва, Россия</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card card-hover text-center h-100 border-0">
+                    <div class="card-body p-4">
+                        <div class="bg-restaurant-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                             style="width: 80px; height: 80px;">
+                            <i class="bi bi-telephone fs-1 text-white"></i>
+                        </div>
+                        <h4 class="card-title">Телефон</h4>
+                        <p class="card-text">+7 (495) 123-45-67<br>+7 (900) 123-45-67</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card card-hover text-center h-100 border-0">
+                    <div class="card-body p-4">
+                        <div class="bg-restaurant-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                             style="width: 80px; height: 80px;">
+                            <i class="bi bi-clock fs-1 text-white"></i>
+                        </div>
+                        <h4 class="card-title">Часы работы</h4>
+                        <p class="card-text">Пн-Чт: 12:00 - 23:00<br>Пт-Вс: 12:00 - 00:00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Форма обратной связи -->
+<section class="feedback-section py-5 mb-5 bg-light" id="reservation">
+    <div class="container">
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8 text-center">
+                <h2 class="display-5 fw-bold mb-1 text-dark">Обратная связь</h2>
+                <p class="lead text-dark">Забронируйте столик или задайте нам вопрос</p>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card card-hover border-0 shadow-lg">
+                    <div class="card-body p-4">
+                        <form>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="name" class="form-label">Ваше имя</label>
+                                    <input type="text" class="form-control" id="name" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone" class="form-label">Телефон</label>
+                                    <input type="tel" class="form-control" id="phone" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="date" class="form-label">Дата</label>
+                                    <input type="date" class="form-control" id="date">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="time" class="form-label">Время</label>
+                                    <input type="time" class="form-control" id="time">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="guests" class="form-label">Количество гостей</label>
+                                <select class="form-select" id="guests">
+                                    <option value="1">1 человек</option>
+                                    <option value="2">2 человека</option>
+                                    <option value="3">3 человека</option>
+                                    <option value="4">4 человека</option>
+                                    <option value="5">5+ человек</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="message" class="form-label">Сообщение</label>
+                                <textarea class="form-control" id="message" rows="4"></textarea>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-book-table btn-lg py-3">
+                                    <i class="bi bi-send me-2"></i>Отправить запрос
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .hero-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                    url('#');
+        background-size: cover;
+        background-position: center;
+        border-radius: 1rem;
+        margin: 2rem;
+        padding: 4rem 2rem;
+    }
+
+    .about-section, .contact-section {
+        padding: 0 2rem;
+    }
+
+    .services-section, .feedback-section {
+        padding: 4rem 2rem;
+        border-radius: 1rem;
+        margin: 0 2rem;
+    }
+
+    /* Исправления для текста в формах */
+    .feedback-section .form-label {
+        color: #333 !important;
+    }
+
+    .feedback-section .card-title,
+    .feedback-section .lead {
+        color: #333 !important;
+        text-shadow: none;
+    }
+
+    @media (max-width: 768px) {
+        .hero-section, .services-section, .feedback-section {
+            margin: 1rem;
+            padding: 2rem 1rem;
+        }
+
+        .about-section, .contact-section {
+            padding: 0 1rem;
+        }
+
+        .display-4 {
+            font-size: 2.5rem;
+        }
+    }
+</style>
+{% endblock %}
