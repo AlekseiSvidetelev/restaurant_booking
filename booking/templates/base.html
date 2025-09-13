@@ -3,167 +3,123 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Ресторан "Гурман"{% endblock %}</title>
+
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
-    <!-- Исправленное подключение Bootstrap Icons -->
-    <link href="{% static 'animate.css/4.1.1/animate.min.css' %}" rel="stylesheet">
     <link href="{% static 'vendor/bootstrap-icons/font/bootstrap-icons.css' %}" rel="stylesheet">
+
     <style>
-        :root {
-            --primary-color: #8B4513;
-            --accent-color: #D4AF37;
-            --dark-text: #333333;
-        }
-
         body {
-            padding-top: 56px;
-            background-image: url("{% static 'images/restaurant-hero-bg.jpg' %}");
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: -1;
+            padding-top: 76px;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 1, 0, 0.5)),
+                       url("{% static 'images/food-background.jpg' %}") center/cover fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #fff; /* Добавляем белый цвет текста по умолчанию */
         }
 
         .navbar {
-            background: rgba(139, 69, 19, 0.9) !important;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            backdrop-filter: blur(5px);
+            background: #8B4513 !important;
         }
 
-        .content-fade-in {
-            animation: fadeIn 0.8s ease-in;
+        .card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .btn-primary {
+            background-color: #8B4513;
+            border-color: #8B4513;
         }
 
-        h1, h2, h3, h4, h5, h6 {
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        .btn-primary:hover {
+            background-color: #6b2c0c;
+            border-color: #6b2c0c;
         }
 
-        .restaurant-icon {
-            color: var(--accent-color);
-            margin-right: 10px;
-        }
-
-        footer {
-            background-color: rgba(101, 67, 33, 0.8);
-            color: white;
-        }
-
-        .btn-book-table {
-            background-color: var(--accent-color);
-            color: white;
-            border-color: var(--accent-color);
-        }
-
-        .btn-book-table:hover {
-            background-color: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
         .logo-img {
             width: 120px;
             height: auto;
-            object-fit: contain;
         }
 
-        /* Новые стили для карточек */
-        .card {
-            background: rgba(255, 255, 255, 0.1) !important;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            transition: transform 0.3s ease;
-        }
-
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .card-title {
-            color: #fff !important;
-        }
-
-        .card-text {
-            color: rgba(255, 255, 255, 0.9) !important;
-        }
-
-        .bg-restaurant-primary {
-            background-color: var(--primary-color) !important;
+        /* Улучшенная видимость текста */
+        .text-muted {
+            color: #ccc !important;
         }
     </style>
-    <title>{% block title %}Ресторан "Гурман"{% endblock %}</title>
+
+    {% block extra_css %}{% endblock %}
 </head>
-<body class="d-flex flex-column min-vh-100">
-<header class="navbar navbar-expand-lg navbar-dark fixed-top">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">
-            <img src="{% static 'images/logo.png' %}" alt="Логотип ресторана Гурман" class="logo-img">
-        </a>
+<body class="d-flex flex-column">
+    <header class="navbar navbar-expand-lg navbar-dark fixed-top shadow">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'booking:home' %}">
+                <img src="{% static 'images/logo.png' %}" alt="Логотип ресторана Гурман" class="logo-img">
+            </a>
 
-        <!-- Новое меню навигации -->
-        <ul class="navbar-nav ms-auto justify-content-center">
-            <li class="nav-item"><a class="nav-link" href="#about"><i class="bi bi-info-circle-fill me-2"></i>О
-                ресторане</a></li>
-            <li class="nav-item"><a class="nav-link" href="#contact"><i
-                    class="bi bi-telephone-fill me-2"></i>Контакты</a></li>
-            <li class="nav-item"><a class="nav-link btn btn-book-table" href="#book-table"><i
-                    class="bi bi-calendar-check-fill me-2"></i>Забронировать столик</a></li>
-            <li class="nav-item"><a class="nav-link" href="#download-menu"><i class="bi bi-download me-2"></i>Скачать
-                меню</a></li>
-        </ul>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <!-- Блок входа/регистрации -->
-        <div class="d-flex ms-auto">
-            {% if user.is_authenticated %}
-            <a href="{% url 'users:profile' %}" class="btn btn-outline-light me-2">
-                <i class="bi bi-person-fill-gear"></i> Профиль
-            </a>
-            <a href="{% url 'users:logout_confirm' %}" class="btn btn-outline-light me-2">
-                <i class="bi bi-box-arrow-right"></i> Выход
-            </a>
-            {% else %}
-            <a href="{% url 'users:login' %}" class="btn btn-outline-light me-2">
-                <i class="bi bi-box-arrow-in-right"></i> Войти
-            </a>
-            <a href="{% url 'users:register' %}" class="btn btn-light">
-                <i class="bi bi-person-plus"></i> Регистрация
-            </a>
-            {% endif %}
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'booking:about' %}">
+                            <i class="bi bi-info-circle me-1"></i>О ресторане
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'booking:contact' %}">
+                            <i class="bi bi-telephone me-1"></i>Контакты
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-light btn-sm mx-1" href="">
+                            <i class="bi bi-calendar-check me-1"></i>Забронировать
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-light btn-sm mx-1" href="{% url 'booking:table_list' %}">
+                            <i class="bi bi-calendar-check me-1"></i>Столики
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="d-flex">
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'users:profile' %}" class="btn btn-outline-light me-2">
+                        <i class="bi bi-person"></i>
+                    </a>
+                    <a href="{% url 'users:logout_confirm' %}" class="btn btn-outline-light">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </a>
+                    {% else %}
+                    <a href="{% url 'users:login' %}" class="btn btn-outline-light me-2">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                    </a>
+                    <a href="{% url 'users:register' %}" class="btn btn-light">
+                        <i class="bi bi-person-plus"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-    </div>
-</header>
+    </header>
 
-<div class="flex-grow-1">
-    <div class="container-fluid">
-        <main class="mt-5 content-fade-in">
-            {% block content %}{% endblock %}
-        </main>
-    </div>
-</div>
+    <main class="flex-grow-1 py-4">
+        {% block content %}{% endblock %}
+    </main>
 
-<footer class="py-3 mt-auto">
-    <div class="container text-center">
-        <small>© 2023 Ресторан "Гурман". Система бронирования столиков</small>
-    </div>
-</footer>
+    <footer class="bg-dark text-light py-3 mt-auto">
+        <div class="container text-center">
+            <small>© {% now "Y" %} Ресторан "Гурман". Система бронирования столиков</small>
+        </div>
+    </footer>
 
-<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

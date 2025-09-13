@@ -99,6 +99,7 @@ class Reservation(models.Model):
         help_text="Дата обновления",
     )
 
+
     class Meta:
         verbose_name = "Бронирование"
         verbose_name_plural = "Бронирования"

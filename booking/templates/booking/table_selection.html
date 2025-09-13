@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="text-center mb-4">Выберите столик</h2>
+    <p class="text-center mb-4">
+        На {{ reservation_date }} в {{ start_time|time:"H:i" }}
+        на {{ duration }} часа для {{ guests_count }} гостей
+    </p>
+
+    {% if tables %}
+    <div class="row">
+        {% for table in tables %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Стол №{{ table.number }}</h5>
+                    <p class="card-text">
+                        {{ table.get_table_type_display }}<br>
+                        До {{ table.seats }} гостей
+                    </p>
+                    <a href="{% url 'booking:booking_confirm' table.id %}" class="btn btn-primary">
+                        Выбрать этот стол
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-warning text-center">
+        К сожалению, свободных столиков нет. Попробуйте изменить параметры.
+    </div>
+    <div class="text-center">
+        <a href="{% url 'booking:booking_start' %}" class="btn btn-secondary">
+            Изменить параметры
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

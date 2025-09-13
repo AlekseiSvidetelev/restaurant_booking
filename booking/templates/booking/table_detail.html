@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Столик №{{ object.number }}{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+
+      <!-- карточка столика -->
+      <div class="card card-glass mb-4">
+        <div class="card-body">
+          <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+            <h1 class="h4 mb-0">Столик №{{ object.number }}</h1>
+            <span class="badge bg-secondary">{{ object.get_table_type_display }}</span>
+          </div>
+
+          <div class="row g-2 text-white-50">
+            <div class="col-sm-4">Мест:</div><div class="col-sm-8 text-white">{{ object.seats }}</div>
+            <div class="col-sm-4">Диапазон гостей:</div><div class="col-sm-8 text-white">
+              {{ object.min_guests }} – {{ object.max_guests }}</div>
+            <div class="col-sm-4">Описание:</div>
+            <div class="col-sm-8 text-white">{{ object.description|default:'—'|linebreaksbr }}</div>
+            <div class="col-sm-4">Активен:</div>
+            <div class="col-sm-8">
+              {% if object.is_active %}<span class="badge bg-success">Да</span>
+              {% else %}<span class="badge bg-secondary">Нет</span>{% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- предстоящие брони -->
+      <h5 class="mb-3">Предстоящие брони</h5>
+      {% if reservations %}
+        <div class="list-group mb-4">
+          {% for r in reservations %}
+            <a href="{% url 'booking:reservation_detail' r.pk %}"
+               class="list-group-item list-group-item-action bg-dark text-white">
+              <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">
+                  {{ r.reservation_date|date:"d.m.Y" }} {{ r.start_time|time:"H:i" }} – {{ r.end_time|time:"H:i" }}
+                </h6>
+                <small>{{ r.get_status_display }}</small>
+              </div>
+              <p class="mb-1">Гостей: {{ r.guests_count }} · {{ r.user.get_full_name|default:r.user.username }}</p>
+              {% if r.special_requests %}<small>{{ r.special_requests|truncatechars:80 }}</small>{% endif %}
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-white-50 mb-4">На сегодня и далее броней нет.</p>
+      {% endif %}
+
+      <!-- кнопки -->
+      <div class="d-flex flex-wrap gap-2">
+        <a href="{% url 'booking:table_list' %}" class="btn btn-outline-light">← К списку</a>
+        <a href="{% url 'booking:table_update' object.pk %}" class="btn btn-primary">Изменить</a>
+        <a href="{% url 'booking:table_delete' object.pk %}" class="btn btn-danger">Удалить</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

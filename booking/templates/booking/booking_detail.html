@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Бронирование #{{ booking.id }}{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+
+      <div class="card card-glass mb-4">
+        <div class="card-body">
+          <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+            <h1 class="h4 mb-0">Бронирование #{{ booking.id }}</h1>
+            <span class="badge
+              {% if booking.status == 'confirmed' %}bg-success
+              {% elif booking.status == 'pending' %}bg-warning
+              {% elif booking.status == 'canceled' %}bg-danger
+              {% else %}bg-info{% endif %}">
+              {{ booking.get_status_display }}
+            </span>
+          </div>
+
+          <div class="row g-2 text-white-50">
+            <div class="col-sm-4">Клиент:</div><div class="col-sm-8 text-white">
+              {{ booking.user.first_name }} {{ booking.user.last_name }}</div>
+            <div class="col-sm-4">Дата:</div><div class="col-sm-8 text-white">
+              {{ booking.reservation_date|date:"d.m.Y" }}</div>
+            <div class="col-sm-4">Время:</div><div class="col-sm-8 text-white">
+              {{ booking.start_time|time:"H:i" }} – {{ booking.end_time|time:"H:i" }}</div>
+            <div class="col-sm-4">Длительность:</div><div class="col-sm-8 text-white">
+              {{ booking.duration }} ч.</div>
+            <div class="col-sm-4">Гостей:</div><div class="col-sm-8 text-white">{{ booking.guests_count }}</div>
+            <div class="col-sm-4">Столик:</div><div class="col-sm-8 text-white">
+              №{{ booking.table.number }} ({{ booking.table.seats }} мест)</div>
+            {% if booking.special_requests %}
+              <div class="col-sm-4">Пожелания:</div>
+              <div class="col-sm-8 text-white">{{ booking.special_requests|linebreaksbr }}</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2">
+        {% if booking.status != 'canceled' %}
+
+          <a href="{% url 'booking:booking_delete' booking.id %}" class="btn btn-danger">
+            <i class="bi bi-trash me-1"></i>Отменить
+          </a>
+        {% endif %}
+        <a href="{% url 'booking:booking_list' %}" class="btn btn-outline-light">
+          <i class="bi bi-arrow-left me-1"></i>К списку
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

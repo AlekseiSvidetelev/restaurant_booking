@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h4 class="mb-0">Подтверждение бронирования</h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5>Детали бронирования:</h5>
+                        <p><strong>Дата:</strong> {{ form.reservation_date.value }}</p>
+                        <p><strong>Время:</strong> {{ form.start_time.value|time:"H:i" }}</p>
+                        <p><strong>Гости:</strong> {{ form.guests_count.value }} человек</p>
+                        <p><strong>Длительность:</strong> {{ form.duration.value }} часа</p>
+                        <p><strong>Стол:</strong> №{{ table.number }} ({{ table.seats }} мест)</p>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <input type="hidden" name="reservation_date" value="{{ form.reservation_date.value }}">
+                        <input type="hidden" name="start_time" value="{{ form.start_time.value }}">
+                        <input type="hidden" name="guests_count" value="{{ form.guests_count.value }}">
+                        <input type="hidden" name="duration" value="{{ form.duration.value }}">
+                        <input type="hidden" name="table" value="{{ table.id }}">
+
+                        <div class="mb-3">
+                            <label class="form-label">Особые пожелания</label>
+                            <textarea name="special_requests" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">
+                            Подтвердить бронирование
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
