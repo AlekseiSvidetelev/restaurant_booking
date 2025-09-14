@@ -11,7 +11,6 @@ import secrets
 
 from config.settings import EMAIL_HOST_USER
 
-# from mailings.models import Mailings
 from .forms import UserRegisterForm, PasswordResetRequestForm, CustomSetPasswordForm, UserProfileUpdateForm
 
 from django.views.generic import ListView

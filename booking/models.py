@@ -3,6 +3,7 @@ from django.db import models
 from users.models import User
 
 
+
 class Table(models.Model):
     TABLE_TYPES = (
         ("standard", "Стандартный"),
@@ -12,7 +13,7 @@ class Table(models.Model):
         ("outdoor", "Уличный"),
     )
     number = models.IntegerField(unique=True, verbose_name="Номер стола", help_text="Введите номер стола")
-    seats = models.PositiveSmallIntegerField(verbose_name="Количество мест", help_text="Введите количество мест")
+
     table_type = models.CharField(max_length=20, choices=TABLE_TYPES, default="standard", verbose_name="Тип столика")
     description = models.TextField(
         blank=True,
@@ -30,9 +31,16 @@ class Table(models.Model):
         verbose_name="Максимальное количество гостей",
         help_text="Введите максимальное количество гостей",
     )
+    photo = models.ImageField(
+        verbose_name="Превью",
+        upload_to="booking/tables/previews",
+        blank=True,
+        null=True,
+        help_text="Загрузите превью стола",
+    )
 
     def __str__(self):
-        return f"Стол {self.number} - {self.seats} мест"
+        return f"Стол {self.number} - от {self.min_guests} до {self.max_guests} мест"
 
     class Meta:
         verbose_name = "Стол"
@@ -99,7 +107,6 @@ class Reservation(models.Model):
         help_text="Дата обновления",
     )
 
-
     class Meta:
         verbose_name = "Бронирование"
         verbose_name_plural = "Бронирования"
@@ -107,3 +114,24 @@ class Reservation(models.Model):
 
     def __str__(self):
         return f"Бронирование #{self.id} - {self.reservation_date} {self.start_time}"
+
+
+class Feedback(models.Model):
+    """
+    Модель обратной связи
+    """
+    subject = models.CharField(max_length=255, verbose_name='Тема письма')
+    email = models.EmailField(max_length=255, verbose_name='Электронный адрес (email)')
+    content = models.TextField(verbose_name='Содержимое письма')
+    time_create = models.DateTimeField(auto_now_add=True, verbose_name='Дата отправки')
+    ip_address = models.GenericIPAddressField(verbose_name='IP отправителя',  blank=True, null=True)
+    user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE, null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Обратная связь'
+        verbose_name_plural = 'Обратная связь'
+        ordering = ['-time_create']
+        db_table = 'app_feedback'
+
+    def __str__(self):
+        return f'Вам письмо от {self.email}'

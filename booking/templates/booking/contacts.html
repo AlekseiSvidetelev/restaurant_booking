@@ -2,6 +2,16 @@
 {% load static %}
 
 {% block content %}
+
+{% if messages %}
+  {% for m in messages %}
+    <div class="alert alert-{{ m.tags }} alert-dismissible fade show" role="alert">
+      {{ m }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
 <section class="py-5 mb-5">
     <div class="container">
         <div class="text-center mb-5">
@@ -11,6 +21,7 @@
 
         <div class="row">
             <!-- Контактная информация -->
+
             <div class="col-lg-6 mb-5">
                 <div class="card border-0 bg-dark bg-opacity-50 h-100">
                     <div class="card-header bg-dark">
@@ -20,7 +31,8 @@
                     </div>
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-4">
-                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3"
+                                 style="width: 50px; height: 50px;">
                                 <i class="bi bi-geo-alt fs-4 text-white"></i>
                             </div>
                             <div>
@@ -30,7 +42,8 @@
                         </div>
 
                         <div class="d-flex align-items-center mb-4">
-                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3"
+                                 style="width: 50px; height: 50px;">
                                 <i class="bi bi-telephone fs-4 text-white"></i>
                             </div>
                             <div>
@@ -40,7 +53,8 @@
                         </div>
 
                         <div class="d-flex align-items-center mb-4">
-                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3"
+                                 style="width: 50px; height: 50px;">
                                 <i class="bi bi-envelope fs-4 text-white"></i>
                             </div>
                             <div>
@@ -50,7 +64,8 @@
                         </div>
 
                         <div class="d-flex align-items-center">
-                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3"
+                                 style="width: 50px; height: 50px;">
                                 <i class="bi bi-clock fs-4 text-white"></i>
                             </div>
                             <div>
@@ -63,6 +78,9 @@
             </div>
 
             <!-- Форма обратной связи -->
+
+
+            <!-- Форма обратной связи (новая логика, старый стиль) -->
             <div class="col-lg-6 mb-5">
                 <div class="card border-0 bg-dark bg-opacity-50 h-100">
                     <div class="card-header bg-dark">
@@ -71,35 +89,16 @@
                         </h2>
                     </div>
                     <div class="card-body">
-                        <form>
-                            <div class="mb-3">
-                                <label for="name" class="form-label text-light">Ваше имя</label>
-                                <input type="text" class="form-control" id="name" required>
+                        <form method="post" action="{% url 'booking:contact' %}">
+                            {% csrf_token %}
+
+                            <!-- поля формы через as_p, но в «нашей» палитре -->
+                            <div class="text-light">
+                                {{ form.as_p }}
                             </div>
-                            <div class="mb-3">
-                                <label for="email" class="form-label text-light">Email</label>
-                                <input type="email" class="form-control" id="email" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="phone" class="form-label text-light">Телефон</label>
-                                <input type="tel" class="form-control" id="phone">
-                            </div>
-                            <div class="mb-3">
-                                <label for="subject" class="form-label text-light">Тема</label>
-                                <select class="form-select" id="subject">
-                                    <option selected>Выберите тему</option>
-                                    <option value="booking">Бронирование столика</option>
-                                    <option value="event">Организация мероприятия</option>
-                                    <option value="feedback">Отзыв о ресторане</option>
-                                    <option value="complaint">Жалоба</option>
-                                    <option value="other">Другое</option>
-                                </select>
-                            </div>
-                            <div class="mb-4">
-                                <label for="message" class="form-label text-light">Сообщение</label>
-                                <textarea class="form-control" id="message" rows="4" required></textarea>
-                            </div>
-                            <div class="d-grid">
+
+                            <!-- кнопка в том же стиле, что и была -->
+                            <div class="d-grid mt-4">
                                 <button type="submit" class="btn btn-primary btn-lg py-2">
                                     <i class="bi bi-send me-2"></i>Отправить сообщение
                                 </button>
@@ -108,6 +107,7 @@
                     </div>
                 </div>
             </div>
+            </form>
         </div>
 
         <!-- Карта -->
@@ -121,49 +121,10 @@
                 <!-- Замените src на реальную карту -->
                 <div class="ratio ratio-16x9">
                     <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2245.37278924566!2d37.61729931593126!3d55.75582698055313!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46b54a50b315e573%3A0xa886bf5a3d9b2e68!2z0JzQvtGB0LrQvtCy0YHQutC40Lkg0JrRgNC10LzQu9GM!5e0!3m2!1sru!2sru!4v1611060351005!5m2!1sru!2sru"
-                            frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+                            frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false"
+                            tabindex="0"></iframe>
                 </div>
             </div>
         </div>
-
-        <!-- Дополнительная информация -->
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="card border-0 bg-dark bg-opacity-50 h-100">
-                    <div class="card-body text-center">
-                        <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
-                            <i class="bi bi-truck fs-2 text-white"></i>
-                        </div>
-                        <h4 class="card-title text-light">Доставка</h4>
-                        <p class="card-text text-light">Мы осуществляем доставку в радиусе 10 км от ресторана. Минимальный заказ — 1000 руб.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 mb-4">
-                <div class="card border-0 bg-dark bg-opacity-50 h-100">
-                    <div class="card-body text-center">
-                        <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
-                            <i class="bi bi-credit-card fs-2 text-white"></i>
-                        </div>
-                        <h4 class="card-title text-light">Оплата</h4>
-                        <p class="card-text text-light">Мы принимаем наличные, банковские карты и электронные платежи.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 mb-4">
-                <div class="card border-0 bg-dark bg-opacity-50 h-100">
-                    <div class="card-body text-center">
-                        <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
-                            <i class="bi bi-calendar-event fs-2 text-white"></i>
-                        </div>
-                        <h4 class="card-title text-light">Мероприятия</h4>
-                        <p class="card-text text-light">Организуем банкеты, корпоративы и другие мероприятия до 50 человек.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </section>
 {% endblock %}

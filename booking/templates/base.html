@@ -17,7 +17,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            color: #fff; /* Добавляем белый цвет текста по умолчанию */
+            color: #fff; /* Установлен белый цвет текста по умолчанию */
         }
 
         .navbar {
@@ -45,81 +45,100 @@
             height: auto;
         }
 
-        /* Улучшенная видимость текста */
+        /* Улучшаем контраст текста, используем светло-серый для слабых оттенков */
         .text-muted {
             color: #ccc !important;
         }
+        :root {
+        --bs-body-color: #fff;
+        --bs-light: #fff;
+        }
+
+        .form-control,
+        .form-select {
+        background: rgba(139, 69, 19, 0.50) !important;
+        color: #fff !important;
+        backdrop-filter: blur(4px);
+        }
+        .custom-btn-hover:hover {
+        background-color: #8B4513; / Темно-коричневый цвет */
+        color: white;    border-color: #8B4513;}
+
     </style>
 
     {% block extra_css %}{% endblock %}
 </head>
 <body class="d-flex flex-column">
-    <header class="navbar navbar-expand-lg navbar-dark fixed-top shadow">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'booking:home' %}">
-                <img src="{% static 'images/logo.png' %}" alt="Логотип ресторана Гурман" class="logo-img">
-            </a>
+<header class="navbar navbar-expand-lg navbar-dark fixed-top shadow">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'booking:home' %}">
+            <img src="{% static 'images/logo.png' %}" alt="Логотип ресторана Гурман" class="logo-img">
+        </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'booking:about' %}">
-                            <i class="bi bi-info-circle me-1"></i>О ресторане
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'booking:contact' %}">
-                            <i class="bi bi-telephone me-1"></i>Контакты
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-outline-light btn-sm mx-1" href="">
-                            <i class="bi bi-calendar-check me-1"></i>Забронировать
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-outline-light btn-sm mx-1" href="{% url 'booking:table_list' %}">
-                            <i class="bi bi-calendar-check me-1"></i>Столики
-                        </a>
-                    </li>
-                </ul>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link btn btn-primary btn-sm mx-1"
+                       href="{% url 'booking:about' %}">
+                        <i class="bi bi-info-circle me-1"></i><strong>О ресторане</strong>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-primary btn-sm mx-1" href="{% url 'booking:contact' %}">
+                        <i class="bi bi-telephone-plus"></i> <strong>Контакты</strong>
+                    </a>
+                </li>
 
-                <div class="d-flex">
-                    {% if user.is_authenticated %}
-                    <a href="{% url 'users:profile' %}" class="btn btn-outline-light me-2">
-                        <i class="bi bi-person"></i>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-primary btn-sm mx-1" href="{% url 'booking:booking_start' %}">
+                        <i class="bi bi-bookmark-plus me-1"></i><strong>Забронировать</strong>
                     </a>
-                    <a href="{% url 'users:logout_confirm' %}" class="btn btn-outline-light">
-                        <i class="bi bi-box-arrow-right"></i>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link btn btn-primary btn-sm mx-1" href="{% url 'booking:table_list' %}">
+                        <i class="bi bi-table me-1"></i> <strong>Столики</strong>
                     </a>
-                    {% else %}
-                    <a href="{% url 'users:login' %}" class="btn btn-outline-light me-2">
-                        <i class="bi bi-box-arrow-in-right"></i>
-                    </a>
-                    <a href="{% url 'users:register' %}" class="btn btn-light">
-                        <i class="bi bi-person-plus"></i>
-                    </a>
-                    {% endif %}
-                </div>
+                </li>
+            </ul>
+
+            <div class="d-flex">
+                {% if user.is_authenticated %}
+                <a href="{% url 'users:profile' %}" class="btn btn-outline-light me-2">
+                    <i class="bi bi-person"></i>
+                </a>
+                <a href="{% url 'users:logout_confirm' %}" class="btn btn-outline-light">
+                    <i class="bi bi-box-arrow-right"></i>
+                </a>
+                {% else %}
+                <a href="{% url 'users:login' %}" class="btn btn-outline-light me-2">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                </a>
+                <a href="{% url 'users:register' %}" class="btn btn-light">
+                    <i class="bi bi-person-plus"></i>
+                </a>
+                {% endif %}
             </div>
         </div>
-    </header>
+    </div>
+</header>
 
-    <main class="flex-grow-1 py-4">
-        {% block content %}{% endblock %}
-    </main>
+<main class="flex-grow-1 py-4">
+    {% block content %}{% endblock %}
+</main>
 
-    <footer class="bg-dark text-light py-3 mt-auto">
-        <div class="container text-center">
-            <small>© {% now "Y" %} Ресторан "Гурман". Система бронирования столиков</small>
-        </div>
-    </footer>
+<footer class="bg-dark text-light py-3 mt-auto">
+    <div class="container text-center">
+        <small>© {% now "Y" %} Ресторан "Гурман". Система бронирования столиков</small>
+    </div>
+</footer>
 
-    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-    {% block extra_js %}{% endblock %}
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="https://api-maps.yandex.ru/2.1/?apikey=ВАШ_КЛЮЧ_API&lang=ru_RU" type="text/javascript"></script>
+{% block extra_js %}{% endblock %}
 </body>
 </html>

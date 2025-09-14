@@ -1,15 +1,18 @@
 
+from django.contrib.messages.views import SuccessMessageMixin
 
 from django.db.models import Q
+
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView, FormView
 
-from booking.forms import TableForm, BookingParametersForm
-from booking.models import Reservation, Table
+from booking.forms import TableForm, BookingParametersForm, FeedbackCreateForm
+from booking.models import Reservation, Table, Feedback
 from django.utils import timezone
-from django.contrib import messages
 from datetime import datetime, timedelta
+
+from booking.services import get_client_ip, send_contact_email_message
 
 
 class HomeView(TemplateView):
@@ -64,11 +67,16 @@ class TableDetailView(DetailView):
 
     model = Table
     template_name = "booking/table_detail.html"
-    context_object_name = "object"
+    context_object_name = "table"
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx["today"] = timezone.now().date()
+        ctx['reservations'] = self.object.reservation_set.filter(
+            status__in=['reserved', 'pending'],
+            reservation_date__gte=timezone.now().date()
+        ).order_by('reservation_date', 'start_time')
+
+        ctx['today'] = timezone.now().date()
         return ctx
 
 
@@ -95,7 +103,7 @@ class BookingListView(ListView):
     model = Reservation
     template_name = "booking/booking_list.html"
     context_object_name = "reservations"
-    ordering = ["-reservation_date", "-start_time"]
+    ordering = ["reservation_date", "-start_time"]
 
 
 class BookingDetailView(DetailView):
@@ -106,117 +114,128 @@ class BookingDetailView(DetailView):
 
 
 class BookingStartView(FormView):
-    template_name = 'booking/booking_start.html'
+    template_name = "booking/booking_start.html"
     form_class = BookingParametersForm
 
     def form_valid(self, form):
         # Сохраняем параметры в сессии
-        self.request.session['booking_params'] = {
-            'reservation_date': form.cleaned_data['reservation_date'].isoformat(),
-            'start_time': form.cleaned_data['start_time'].isoformat(),
-            'guests_count': form.cleaned_data['guests_count'],
-            'duration': form.cleaned_data['duration'],
+        self.request.session["booking_params"] = {
+            "reservation_date": form.cleaned_data["reservation_date"].isoformat(),
+            "start_time": form.cleaned_data["start_time"].isoformat(),
+            "guests_count": form.cleaned_data["guests_count"],
+            "duration": form.cleaned_data["duration"],
         }
-        return redirect('booking:table_selection')
+        return redirect("booking:table_selection")
 
 
 class TableSelectionView(ListView):
-    template_name = 'booking/table_selection.html'
-    context_object_name = 'tables'
+    template_name = "booking/table_selection.html"
+    context_object_name = "tables"
 
     def get_queryset(self):
-        # Получаем параметры из сессии
-        booking_params = self.request.session.get('booking_params')
+        booking_params = self.request.session.get("booking_params")
         if not booking_params:
-            return redirect('booking:booking_start')
+            return redirect("booking:booking_start")
 
-        # Преобразуем параметры
-        reservation_date = datetime.strptime(booking_params['reservation_date'], '%Y-%m-%d').date()
-        start_time = datetime.strptime(booking_params['start_time'], '%H:%M:%S').time()
-        guests_count = booking_params['guests_count']
-        duration = booking_params['duration']
+        reservation_date = datetime.strptime(
+            booking_params["reservation_date"], "%Y-%m-%d"
+        ).date()
+        start_time = datetime.strptime(
+            booking_params["start_time"], "%H:%M:%S"
+        ).time()
+        guests_count = booking_params["guests_count"]
+        duration = booking_params["duration"]
 
-        # Вычисляем время окончания
-        start_datetime = timezone.make_aware(
+        start_dt = timezone.make_aware(
             datetime.combine(reservation_date, start_time)
         )
-        end_datetime = start_datetime + timedelta(hours=duration)
-        end_time = end_datetime.time()
+        end_dt = start_dt + timedelta(hours=duration)
 
-        # Сохраняем параметры в контекст
+        # сохраним в контекст (если нужно)
         self.booking_params = {
-            'reservation_date': reservation_date,
-            'start_time': start_time,
-            'end_time': end_time,
-            'duration': duration,
-            'guests_count': guests_count
+            "reservation_date": reservation_date,
+            "start_time": start_time,
+            "end_time": end_dt.time(),
+            "duration": duration,
+            "guests_count": guests_count,
         }
 
-        # Находим занятые столики
-        booked_tables = Reservation.objects.filter(
-            reservation_date=reservation_date,
-            status__in=['pending', 'confirmed'],
-        ).exclude(
-            Q(end_time__lte=start_time) | Q(start_time__gte=end_time)
-        ).values_list('table_id', flat=True)
+        busy = (
+            Reservation.objects.filter(
+                reservation_date=reservation_date,
+                status__in=["pending", "confirmed"],
+            )
+            .exclude(
+                Q(end_time__lte=start_time) | Q(start_time__gte=end_dt.time())
+            )
+            .values_list("table_id", flat=True)
+        )
 
-        # Возвращаем свободные столики с достаточной вместимостью
         return Table.objects.filter(
-            seats__gte=guests_count,
-            is_active=True
-        ).exclude(id__in=booked_tables)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(self.booking_params)
-        return context
+            is_active=True,
+            min_guests__lte=guests_count,
+            max_guests__gte=guests_count,
+        ).exclude(id__in=busy)
 
 
 class BookingConfirmView(CreateView):
     model = Reservation
-    fields = ['special_requests']  # Только особые пожелания
-    template_name = 'booking/booking_confirm.html'
+    fields = ["special_requests"]
+    template_name = "booking/booking_confirm.html"
 
-    def get_initial(self):
-        initial = super().get_initial()
-        # Получаем параметры из сессии
-        booking_params = self.request.session.get('booking_params')
-        table_id = self.kwargs.get('table_id')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        booking_params = self.request.session.get("booking_params")
+        table_id = self.kwargs.get("table_id")
 
         if booking_params and table_id:
-            initial.update({
-                'reservation_date': booking_params['reservation_date'],
-                'start_time': booking_params['start_time'],
-                'guests_count': booking_params['guests_count'],
-                'duration': booking_params['duration'],
-                'table': table_id
-            })
-        return initial
+            context["booking_params"] = booking_params
+            context["table"] = get_object_or_404(Table, id=table_id)
+
+            reservation_date = datetime.strptime(booking_params["reservation_date"], "%Y-%m-%d").date()
+            start_time = datetime.strptime(booking_params["start_time"], "%H:%M:%S").time()
+            duration = int(booking_params["duration"])
+
+            start_datetime = timezone.make_aware(datetime.combine(reservation_date, start_time))
+            end_datetime = start_datetime + timedelta(hours=duration)
+
+            context["start_time"] = start_time
+            context["end_time"] = end_datetime.time()
+
+        return context
 
     def form_valid(self, form):
-        form.instance.user = self.request.user
-        form.instance.status = 'pending'
 
-        # Устанавливаем end_time
-        reservation_date = form.cleaned_data['reservation_date']
-        start_time = form.cleaned_data['start_time']
-        duration = form.cleaned_data['duration']
+        booking_params = self.request.session.get("booking_params")
+        table_id = self.kwargs.get("table_id")
+
+        if not booking_params or not table_id:
+            form.add_error(None, "Данные бронирования не найдены. Пожалуйста, начните процесс заново.")
+            return self.form_invalid(form)
+
+        form.instance.user = self.request.user
+        form.instance.status = "pending"
+        form.instance.reservation_date = datetime.strptime(booking_params["reservation_date"], "%Y-%m-%d").date()
+        form.instance.start_time = datetime.strptime(booking_params["start_time"], "%H:%M:%S").time()
+        form.instance.guests_count = int(booking_params["guests_count"])
+        form.instance.duration = int(booking_params["duration"])
+        form.instance.table_id = table_id
 
         start_datetime = timezone.make_aware(
-            datetime.combine(reservation_date, start_time)
+            datetime.combine(form.instance.reservation_date, form.instance.start_time)
         )
-        end_datetime = start_datetime + timedelta(hours=duration)
+        end_datetime = start_datetime + timedelta(hours=form.instance.duration)
         form.instance.end_time = end_datetime.time()
 
-        # Очищаем сессию
-        if 'booking_params' in self.request.session:
-            del self.request.session['booking_params']
+
+        if "booking_params" in self.request.session:
+            del self.request.session["booking_params"]
 
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('booking:booking_detail', kwargs={'pk': self.object.pk})
-
+        return reverse("booking:booking_detail", kwargs={"pk": self.object.pk})
 
 
 class BookingDeleteView(DeleteView):
@@ -225,3 +244,21 @@ class BookingDeleteView(DeleteView):
     template_name = "booking/booking_confirm_delete.html"
     context_object_name = "booking"
     success_url = reverse_lazy("booking:booking_list")
+
+
+class FeedbackCreateView(SuccessMessageMixin, CreateView):
+    model = Feedback
+    form_class = FeedbackCreateForm
+    success_message = 'Ваше письмо успешно отправлено администрации сайта'
+    template_name = 'booking/contacts.html'
+    extra_context = {'title': 'Контактная форма'}
+    success_url = reverse_lazy('booking:home')
+
+    def form_valid(self, form):
+        if form.is_valid():
+            feedback = form.save(commit=False)
+            feedback.ip_address = get_client_ip(self.request)
+            if self.request.user.is_authenticated:
+                feedback.user = self.request.user
+            send_contact_email_message(feedback.subject, feedback.email, feedback.content, feedback.ip_address, feedback.user_id)
+        return super().form_valid(form)

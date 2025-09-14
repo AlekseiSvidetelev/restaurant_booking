@@ -1,20 +1,30 @@
-from datetime import time, timedelta
-from constants import WORK_SCHEDULE, STEP_MINUTES
+from django.conf import settings
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+
+from constants import HELP_EMAIL
+from users.models import User
 
 
-def time_choices_for_date(dt):
-    """Возвращает 2 списка: (часы), (минуты) в рамках режима дня dt."""
-    weekday = dt.weekday()  # 0=пн … 6=вс
-    open_t, close_t = WORK_SCHEDULE[weekday]
+def send_contact_email_message(subject, email, content, ip, user_id):
+    """
+    Функция отправки сообщения на почту
+    """
+    user = User.objects.get(id=user_id) if user_id else None
+    message = render_to_string('booking/feedback_email_send.html', {
+        'email': email,
+        'content': content,
+        'ip': ip,
+        'user': user,
+    })
+    email = EmailMessage(subject, message, settings.SERVER_EMAIL, settings.HELP_EMAIL)
+    email.send(fail_silently=False)
 
-    # превращаем в минуты от начала суток
-    open_min = open_t.hour * 60 + open_t.minute
-    close_min = close_t.hour * 60 + close_t.minute
-    if close_min == 23 * 60 + 59:  # до полуночи
-        close_min = 24 * 60
 
-    # часы
-    hours = list({(m // 60) for m in range(open_min, close_min, STEP_MINUTES)})
-    # минуты
-    minutes = list(range(0, 60, STEP_MINUTES))
-    return sorted(hours), minutes
+def get_client_ip(request):
+    """
+    Получение IP клиента
+    """
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    ip = x_forwarded_for.split(',')[0] if x_forwarded_for else request.META.get('REMOTE_ADDR')
+    return ip

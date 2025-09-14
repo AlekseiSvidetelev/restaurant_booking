@@ -12,7 +12,7 @@
         <div class="glass-card card border-0 mb-5">
             <div class="card-body">
                 <nav class="nav nav-pills nav-justified">
-                    <a class="nav-link text-light active" href="#history">История</a>
+                    <a class="nav-link text-light" href="#history">История</a>
                     <a class="nav-link text-light" href="#mission">Миссия и ценности</a>
                     <a class="nav-link text-light" href="#team">Команда</a>
                 </nav>
@@ -121,7 +121,7 @@
                 </div>
                 
                 <div class="text-center mt-4">
-                    <a href="#reservation" class="btn btn-primary btn-lg">
+                    <a href="{% url 'booking:booking_start' %}" class="btn btn-primary btn-lg">
                         <i class="bi bi-calendar-check me-2"></i>Забронировать столик
                     </a>
                 </div>

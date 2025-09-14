@@ -122,8 +122,8 @@ AUTH_USER_MODEL = "users.User"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
-EMAIL_HOST = "smtp.yandex.ru"
-EMAIL_PORT = 465
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT'))
 EMAIL_HOST_USER = os.getenv("EMAIL_USER")
 EMAIL_HOST_PASSWORD = os.getenv("PASSWORD_EMAIL_USER")
 EMAIL_USE_TLS = False
@@ -133,3 +133,5 @@ SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 LOGIN_URL = "/users/login"
+
+HELP_EMAIL = [e.strip() for e in os.getenv('HELP_EMAIL', '').split(',') if e.strip()]
