@@ -6,6 +6,11 @@ from constants import HELP_EMAIL
 from users.models import User
 
 
+def get_reservation_for_table(table_id):
+    """ Получение бронирования по id столика """
+    pass
+
+
 def send_contact_email_message(subject, email, content, ip, user_id):
     """
     Функция отправки сообщения на почту

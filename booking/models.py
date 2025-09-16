@@ -33,7 +33,7 @@ class Table(models.Model):
     )
     photo = models.ImageField(
         verbose_name="Превью",
-        upload_to="booking/tables/previews",
+        upload_to="tables/previews",
         blank=True,
         null=True,
         help_text="Загрузите превью стола",
@@ -46,11 +46,14 @@ class Table(models.Model):
         verbose_name = "Стол"
         verbose_name_plural = "Столы"
         ordering = ["number"]
+        permissions = [
+            ("administrate_tables", "Может добавлять и редактировать столы"),
+            ("super_administrate_tables", "Может добавлять, редактировать, удалять столы"),
+        ]
 
 
 class Reservation(models.Model):
     STATUS_CHOICES = (
-        ("pending", "Ожидает подтверждения"),
         ("confirmed", "Подтверждено"),
         ("canceled", "Отменено"),
         ("completed", "Завершено"),
@@ -82,14 +85,9 @@ class Reservation(models.Model):
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
-        default="pending",
+        default="confirmed",
         verbose_name="Статус",
         help_text="Статус бронирования",
-    )
-    is_confirmed = models.BooleanField(
-        default=False,
-        verbose_name="Подтверждено",
-        help_text="Подтверждено ли бронирование?",
     )
     special_requests = models.TextField(
         blank=True,
@@ -111,6 +109,11 @@ class Reservation(models.Model):
         verbose_name = "Бронирование"
         verbose_name_plural = "Бронирования"
         ordering = ["-reservation_date", "start_time"]
+        permissions = [
+            ("can_cancel_reservation", "Может отменять бронирование"),
+            ("can_update_status_reservation", "Может менять статус бронирования"),
+            ("can_delete_reservation", "Может удалять бронирование"),
+        ]
 
     def __str__(self):
         return f"Бронирование #{self.id} - {self.reservation_date} {self.start_time}"

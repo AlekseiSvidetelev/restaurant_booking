@@ -94,16 +94,22 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link btn btn-primary btn-sm mx-1" href="{% url 'booking:booking_start' %}">
-                        <i class="bi bi-bookmark-plus me-1"></i><strong>Забронировать</strong>
+                    <a class="nav-link btn btn-primary btn-sm mx-1" href="{% url 'booking:booking_list' %}">
+                        <i class="bi bi-bookmark-plus me-1"></i>
+                        {% if request.user.is_authenticated %}
+                        <strong>Мои бронирования</strong>
+                        {% else %}
+                        <strong>Забронировать стол</strong>
+                        {% endif %}
                     </a>
                 </li>
-
+                {% if perms.table.administrate_tables or perms.table.super_administrate_tables %}
                 <li class="nav-item">
                     <a class="nav-link btn btn-primary btn-sm mx-1" href="{% url 'booking:table_list' %}">
                         <i class="bi bi-table me-1"></i> <strong>Столики</strong>
                     </a>
                 </li>
+                {% endif %}
             </ul>
 
             <div class="d-flex">

@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import datetime, timedelta
 
-from booking.models import Reservation, Table, Feedback
+from booking.models import Table, Feedback
 from constants import WORK_SCHEDULE
 
 
@@ -26,10 +26,9 @@ class StyleFormMixin:
 
 
 class TableForm(StyleFormMixin, forms.ModelForm):
-
     class Meta:
         model = Table
-        fields = ["number", "photo","table_type", "description", "is_active", "min_guests", "max_guests"]
+        fields = ["number", "photo", "table_type", "description", "is_active", "min_guests", "max_guests"]
 
 
 class BookingParametersForm(Form):

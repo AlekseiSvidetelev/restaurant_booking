@@ -20,13 +20,13 @@
                         <div class="col-sm-4">Превью:</div>
                         <div class="col-sm-8">
                             {% if object.photo and object.photo.url %}
-                                <img src="{{ object.photo.url }}" alt="Фотография столика №{{ object.number }}"
-                                     class="img-thumbnail img-fluid" style="max-height: 200px;"/>
+                            <img src="{{ object.photo.url }}" alt="Фотография столика №{{ object.number }}"
+                                 class="img-thumbnail img-fluid" style="max-height: 200px;"/>
                             {% else %}
-                                <div class="text-muted bg-dark p-3 rounded text-center">
-                                    <i class="bi bi-image fs-1"></i>
-                                    <p class="mt-2">Фотография не загружена</p>
-                                </div>
+                            <div class="text-muted bg-dark p-3 rounded text-center">
+                                <i class="bi bi-image fs-1"></i>
+                                <p class="mt-2">Фотография не загружена</p>
+                            </div>
                             {% endif %}
                         </div>
                         <div class="col-sm-4">Диапазон гостей:</div>
@@ -38,9 +38,9 @@
                         <div class="col-sm-4">Активен:</div>
                         <div class="col-sm-8">
                             {% if object.is_active %}
-                                <span class="badge bg-success">Да</span>
+                            <span class="badge bg-success">Да</span>
                             {% else %}
-                                <span class="badge bg-secondary">Нет</span>
+                            <span class="badge bg-secondary">Нет</span>
                             {% endif %}
                         </div>
                     </div>
@@ -51,19 +51,19 @@
             <h5 class="mb-3 text-light">Предстоящие брони</h5>
             {% if reservations %}
             <div class="list-group mb-4">
-                {% for r in reservations %}
+                {% for reservation in reservations %}
                 <div class="list-group-item list-group-item-action bg-dark text-white">
                     <div class="d-flex w-100 justify-content-between">
                         <h6 class="mb-1">
-                            {{ r.reservation_date }} {{ r.start_time }} – {{ r.end_time }}
+                            {{ reservation.reservation_date }} {{ reservation.start_time }} – {{ reservation.end_time }}
                         </h6>
                         <small class="badge bg-{% if r.status == 'confirmed' %}success{% else %}warning{% endif %}">
-                            {{ r.get_status_display }}
+                            {{ reservation.get_status_display }}
                         </small>
                     </div>
-                    <p class="mb-1">Гостей: {{ r.guests_count }} · {{ r.user.get_full_name|default:r.user.username }} </p>
-                    {% if r.special_requests %}
-                    <small class="text-muted">{{ r.special_requests|truncatechars:80 }}</small>
+                    <p class="mb-1">Гостей: {{ reservation.guests_count }} · {{ reservation.user.get_full_name }} </p>
+                    {% if reservation.special_requests %}
+                    <small class="text-muted">{{ reservation.special_requests }}</small>
                     {% else %}
                     <small class="text-muted">Пожеланий нет</small>
                     {% endif %}
@@ -85,3 +85,4 @@
     </div>
 </section>
 {% endblock %}
+
