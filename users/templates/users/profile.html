@@ -6,7 +6,7 @@
 <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
         <div class="card border-0 shadow-lg rounded-4 card-hover">
-            <div class="card-header bg-primary text-white text-center py-4">
+            <div class="card-header btn-primary text-white text-center py-4">
                 <h4><i class="bi bi-person-circle me-2"></i>Ваш профиль</h4>
             </div>
             <div class="card-body p-5">
@@ -75,7 +75,7 @@
                     <h5 class="mb-3">Статистика бронирований</h5>
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="card bg-light mb-3 card-hover">
+                            <div class="bi me-2">
                                 <div class="card-body text-center">
                                     <h5 class="card-title">{{ reservations_count|default:0 }}</h5>
                                     <p class="card-text">Всего бронирований</p>
@@ -83,7 +83,7 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="card bg-light mb-3 card-hover">
+                            <div class="bi me-2">
                                 <div class="card-body text-center">
                                     <h5 class="card-title">{{ active_reservations|default:0 }}</h5>
                                     <p class="card-text">Активных бронирований</p>

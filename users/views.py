@@ -8,7 +8,7 @@ from django.template.loader import render_to_string
 from django.conf import settings
 import secrets
 
-
+from booking.models import Reservation
 from config.settings import EMAIL_HOST_USER
 
 from .forms import UserRegisterForm, PasswordResetRequestForm, CustomSetPasswordForm, UserProfileUpdateForm
@@ -159,12 +159,12 @@ class UserProfileView(LoginRequiredMixin, DetailView):
     def get_object(self, queryset=None):
         return self.request.user
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     user = self.request.user
-    #     context["mailings_count"] = Mailings.objects.filter(owner=user).count()
-    #     context["active_mailings"] = Mailings.objects.filter(owner=user, status="started").count()
-    #     return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context["reservations_count"] = Reservation.objects.filter(user=user).count()
+        context["active_reservations"] = Reservation.objects.filter(user=user, status="confirmed").count()
+        return context
 
 
 class UserProfileUpdateView(UpdateView):

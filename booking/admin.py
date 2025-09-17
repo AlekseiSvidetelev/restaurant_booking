@@ -6,7 +6,7 @@ from booking.models import Feedback, Table, Reservation
 @admin.register(Table)
 class TableAdmin(admin.ModelAdmin):
 
-    list_display = ('id', 'number', 'is_active','max_guests')
+    list_display = ('id', 'number', 'is_active', 'min_guests', 'max_guests')
     search_fields = ("number",)
 
 @admin.register(Reservation)

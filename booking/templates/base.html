@@ -103,7 +103,7 @@
                         {% endif %}
                     </a>
                 </li>
-                {% if perms.table.administrate_tables or perms.table.super_administrate_tables %}
+                {% if perms.booking.administrate_tables or perms.booking.super_administrate_tables or user.is_superuser %}
                 <li class="nav-item">
                     <a class="nav-link btn btn-primary btn-sm mx-1" href="{% url 'booking:table_list' %}">
                         <i class="bi bi-table me-1"></i> <strong>Столики</strong>
@@ -115,17 +115,17 @@
             <div class="d-flex">
                 {% if user.is_authenticated %}
                 <a href="{% url 'users:profile' %}" class="btn btn-outline-light me-2">
-                    <i class="bi bi-person"></i>
+                    <i class="bi bi-person"></i>Профиль
                 </a>
                 <a href="{% url 'users:logout_confirm' %}" class="btn btn-outline-light">
-                    <i class="bi bi-box-arrow-right"></i>
+                    <i class="bi bi-box-arrow-right"></i> Выйти
                 </a>
                 {% else %}
                 <a href="{% url 'users:login' %}" class="btn btn-outline-light me-2">
-                    <i class="bi bi-box-arrow-in-right"></i>
+                    <i class="bi bi-box-arrow-in-right"></i> Войти
                 </a>
                 <a href="{% url 'users:register' %}" class="btn btn-light">
-                    <i class="bi bi-person-plus"></i>
+                    <i class="bi bi-person-plus"></i> Зарегистрироваться
                 </a>
                 {% endif %}
             </div>
@@ -144,7 +144,7 @@
 </footer>
 
 <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-<script src="https://api-maps.yandex.ru/2.1/?apikey=ВАШ_КЛЮЧ_API&lang=ru_RU" type="text/javascript"></script>
+
 {% block extra_js %}{% endblock %}
 </body>
 </html>

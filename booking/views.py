@@ -47,8 +47,8 @@ class TableListView(LoginRequiredMixin, ListView):
 
     def dispatch(self, request, *args, **kwargs):
         user = self.request.user
-        if not (user.has_perm("table.administrate_tables") or
-                user.has_perm("table.super_administrate_tables") or
+        if not (user.has_perm("booking.administrate_tables") or
+                user.has_perm("booking.super_administrate_tables") or
                 user.is_superuser):
             raise PermissionDenied("Доступ ограничен.")
         return super().dispatch(request, *args, **kwargs)
@@ -73,8 +73,8 @@ class TableCreateView(LoginRequiredMixin, CreateView):
 
     def dispatch(self, request, *args, **kwargs):
         user = self.request.user
-        if not (user.has_perm("table.administrate_tables") or
-                user.has_perm("table.super_administrate_tables") or
+        if not (user.has_perm("booking.administrate_tables") or
+                user.has_perm("booking.super_administrate_tables") or
                 user.is_superuser):
             raise PermissionDenied("Доступ ограничен.")
         return super().dispatch(request, *args, **kwargs)
@@ -89,8 +89,8 @@ class TableDetailView(LoginRequiredMixin, DetailView):
 
     def dispatch(self, request, *args, **kwargs):
         user = self.request.user
-        if not (user.has_perm("table.administrate_tables") or
-                user.has_perm("table.super_administrate_tables") or
+        if not (user.has_perm("booking.administrate_tables") or
+                user.has_perm("booking.super_administrate_tables") or
                 user.is_superuser):
             raise PermissionDenied("Доступ ограничен.")
         return super().dispatch(request, *args, **kwargs)
@@ -115,8 +115,8 @@ class TableUpdateView(LoginRequiredMixin, UpdateView):
 
     def dispatch(self, request, *args, **kwargs):
         user = self.request.user
-        if not (user.has_perm("table.administrate_tables") or
-                user.has_perm("table.super_administrate_tables") or
+        if not (user.has_perm("booking.administrate_tables") or
+                user.has_perm("booking.super_administrate_tables") or
                 user.is_superuser):
             raise PermissionDenied("Доступ ограничен.")
         return super().dispatch(request, *args, **kwargs)
@@ -133,7 +133,7 @@ class TableDeleteView(LoginRequiredMixin, DeleteView):
 
     def dispatch(self, request, *args, **kwargs):
         user = self.request.user
-        if not (user.has_perm("table.super_administrate_tables") or
+        if not (user.has_perm("booking.super_administrate_tables") or
                 user.is_superuser):
             raise PermissionDenied("Доступ ограничен.")
         return super().dispatch(request, *args, **kwargs)
