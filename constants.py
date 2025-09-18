@@ -7,11 +7,7 @@ WORK_SCHEDULE = {
     3: (time(10, 0), time(22, 0)),  # чт
     4: (time(10, 0), time(23, 0)),  # пт
     5: (time(10, 0), time(23, 0)),  # сб
-    6: (None, None)  # вс – выходной
+    6: (None, None),  # вс – выходной
 }
 
-HELP_EMAIL = [
-    "help@help.com",
-    "help@help.ru",
-    "asvidet@jinr.ru"
-]
+HELP_EMAIL = ["help@help.com", "help@help.ru", "asvidet@jinr.ru"]

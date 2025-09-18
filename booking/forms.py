@@ -84,18 +84,20 @@ class BookingParametersForm(Form):
 
         return cleaned_data
 
-class FeedbackForm(Form):
 
-    name    = forms.CharField(max_length=100)
-    email   = forms.EmailField()
-    phone   = forms.CharField(max_length=20, required=False)
-    subject = forms.ChoiceField(choices=[
-        ('booking','Бронирование столика'),
-        ('event','Организация мероприятия'),
-        ('feedback','Отзыв о ресторане'),
-        ('complaint','Жалоба'),
-        ('other','Другое'),
-    ])
+class FeedbackForm(Form):
+    name = forms.CharField(max_length=100)
+    email = forms.EmailField()
+    phone = forms.CharField(max_length=20, required=False)
+    subject = forms.ChoiceField(
+        choices=[
+            ("booking", "Бронирование столика"),
+            ("event", "Организация мероприятия"),
+            ("feedback", "Отзыв о ресторане"),
+            ("complaint", "Жалоба"),
+            ("other", "Другое"),
+        ]
+    )
     message = forms.CharField(widget=forms.Textarea)
 
 
@@ -106,7 +108,7 @@ class FeedbackCreateForm(forms.ModelForm):
 
     class Meta:
         model = Feedback
-        fields = ('subject', 'email', 'content')
+        fields = ("subject", "email", "content")
 
     def __init__(self, *args, **kwargs):
         """
@@ -114,4 +116,4 @@ class FeedbackCreateForm(forms.ModelForm):
         """
         super().__init__(*args, **kwargs)
         for field in self.fields:
-            self.fields[field].widget.attrs.update({'class': 'form-control', 'autocomplete': 'off'})
+            self.fields[field].widget.attrs.update({"class": "form-control", "autocomplete": "off"})

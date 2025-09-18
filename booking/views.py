@@ -4,14 +4,24 @@ from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
-from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView, FormView, \
-    RedirectView
+from django.views.generic import (
+    TemplateView,
+    ListView,
+    CreateView,
+    UpdateView,
+    DetailView,
+    DeleteView,
+    FormView,
+    RedirectView,
+)
 from booking.forms import TableForm, BookingParametersForm, FeedbackCreateForm
 from booking.models import Reservation, Table, Feedback
 from django.utils import timezone
 from datetime import datetime, timedelta
 
 from booking.services import get_client_ip, send_contact_email_message
+from django.db.models.functions import Cast, Concat
+from django.db.models import DateTimeField, Value
 
 
 class HomeView(TemplateView):
@@ -36,7 +46,9 @@ class ContactsView(TemplateView):
         context["page_title"] = 'Контакты ресторана "Гурман"'
         return context
 
+
 # СТОЛЫ
+
 
 class TableListView(LoginRequiredMixin, ListView):
 
@@ -47,9 +59,11 @@ class TableListView(LoginRequiredMixin, ListView):
 
     def dispatch(self, request, *args, **kwargs):
         user = self.request.user
-        if not (user.has_perm("booking.administrate_tables") or
-                user.has_perm("booking.super_administrate_tables") or
-                user.is_superuser):
+        if not (
+            user.has_perm("booking.administrate_tables")
+            or user.has_perm("booking.super_administrate_tables")
+            or user.is_superuser
+        ):
             raise PermissionDenied("Доступ ограничен.")
         return super().dispatch(request, *args, **kwargs)
 
@@ -73,9 +87,11 @@ class TableCreateView(LoginRequiredMixin, CreateView):
 
     def dispatch(self, request, *args, **kwargs):
         user = self.request.user
-        if not (user.has_perm("booking.administrate_tables") or
-                user.has_perm("booking.super_administrate_tables") or
-                user.is_superuser):
+        if not (
+            user.has_perm("booking.administrate_tables")
+            or user.has_perm("booking.super_administrate_tables")
+            or user.is_superuser
+        ):
             raise PermissionDenied("Доступ ограничен.")
         return super().dispatch(request, *args, **kwargs)
 
@@ -86,24 +102,28 @@ class TableDetailView(LoginRequiredMixin, DetailView):
     template_name = "booking/table_detail.html"
     context_object_name = "table"
 
-
     def dispatch(self, request, *args, **kwargs):
         user = self.request.user
-        if not (user.has_perm("booking.administrate_tables") or
-                user.has_perm("booking.super_administrate_tables") or
-                user.is_superuser):
+        if not (
+            user.has_perm("booking.administrate_tables")
+            or user.has_perm("booking.super_administrate_tables")
+            or user.is_superuser
+        ):
             raise PermissionDenied("Доступ ограничен.")
         return super().dispatch(request, *args, **kwargs)
 
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['reservations'] = self.object.reservation_set.filter(
-            status__in=['confirmed'],
-            reservation_date__gte=timezone.now().date()
-        ).order_by('reservation_date', 'start_time')
+        now = timezone.now()
+        today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
 
-        context['today'] = timezone.now().date()
+        context["reservations"] = self.object.reservation_set.filter(
+            status__in=["confirmed"],
+            reservation_date__gte=today_start.date(),
+            end_time__gt=now.time() if now.date() == today_start.date() else None,
+        ).order_by("reservation_date", "start_time")
+
+        context["today"] = timezone.now().date()
         return context
 
 
@@ -115,9 +135,11 @@ class TableUpdateView(LoginRequiredMixin, UpdateView):
 
     def dispatch(self, request, *args, **kwargs):
         user = self.request.user
-        if not (user.has_perm("booking.administrate_tables") or
-                user.has_perm("booking.super_administrate_tables") or
-                user.is_superuser):
+        if not (
+            user.has_perm("booking.administrate_tables")
+            or user.has_perm("booking.super_administrate_tables")
+            or user.is_superuser
+        ):
             raise PermissionDenied("Доступ ограничен.")
         return super().dispatch(request, *args, **kwargs)
 
@@ -133,25 +155,46 @@ class TableDeleteView(LoginRequiredMixin, DeleteView):
 
     def dispatch(self, request, *args, **kwargs):
         user = self.request.user
-        if not (user.has_perm("booking.super_administrate_tables") or
-                user.is_superuser):
+        if not (user.has_perm("booking.super_administrate_tables") or user.is_superuser):
             raise PermissionDenied("Доступ ограничен.")
         return super().dispatch(request, *args, **kwargs)
 
+
 # БРОНИРОВАНИЯ
 
-class BookingListView(LoginRequiredMixin, ListView):
 
+class BookingListView(LoginRequiredMixin, ListView):
     model = Reservation
     template_name = "booking/booking_list.html"
     context_object_name = "reservations"
-    ordering = ["reservation_date", "-start_time"]
 
     def get_queryset(self):
-        if self.request.user.is_superuser:
-            return super().get_queryset()
+        queryset = super().get_queryset()
+        user = self.request.user
+
+        if not (user.is_superuser or user.has_perm("booking.administrate_tables")):
+            queryset = queryset.filter(user=user)
+
+        filter_type = self.request.GET.get("filter", "future")
+        today_start = timezone.make_aware(datetime.combine(timezone.now().date(), datetime.min.time()))
+
+        if filter_type == "past":
+            queryset = queryset.filter(reservation_date__lt=today_start)
+        elif filter_type == "all":
+            pass
         else:
-            return super().get_queryset().filter(user=self.request.user)
+            queryset = queryset.filter(reservation_date__gte=today_start)
+        return queryset.annotate(
+            start_dt=Cast(
+                Concat("reservation_date", Value(" "), "start_time"),
+                output_field=DateTimeField(),
+            )
+        ).order_by("start_dt")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["filter"] = self.request.GET.get("filter", "future")
+        return context
 
 
 class BookingDetailView(LoginRequiredMixin, DetailView):
@@ -162,15 +205,12 @@ class BookingDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx['reservations'] = (
-            Reservation.objects.filter(
-                table=self.object.table,
-                status__in=['confirmed'],
-                reservation_date__gte=timezone.now().date(),
-            )
-            .order_by('reservation_date', 'start_time')
-        )
-        ctx['today'] = timezone.now().date()
+        ctx["reservations"] = Reservation.objects.filter(
+            table=self.object.table,
+            status__in=["confirmed"],
+            reservation_date__gte=timezone.now().date(),
+        ).order_by("reservation_date", "start_time")
+        ctx["today"] = timezone.now().date()
         return ctx
 
 
@@ -216,10 +256,10 @@ class TableSelectionView(LoginRequiredMixin, ListView):
 
         busy = Reservation.objects.filter(
             reservation_date=reservation_date,
-            status='confirmed',
+            status="confirmed",
             start_time__lt=end_dt.time(),
             end_time__gt=start_time,
-        ).values_list('table_id', flat=True)
+        ).values_list("table_id", flat=True)
 
         return Table.objects.filter(
             is_active=True,
@@ -279,7 +319,6 @@ class BookingConfirmView(LoginRequiredMixin, CreateView):
         end_datetime = start_datetime + timedelta(hours=form.instance.duration)
         form.instance.end_time = end_datetime.time()
 
-
         if "booking_params" in self.request.session:
             del self.request.session["booking_params"]
 
@@ -291,45 +330,39 @@ class BookingConfirmView(LoginRequiredMixin, CreateView):
 
 class BookingStatusUpdateView(LoginRequiredMixin, RedirectView):
 
-    pattern_name = 'booking:booking_detail'
+    pattern_name = "booking:booking_detail"
 
     def get_redirect_url(self, *args, **kwargs):
-        booking = get_object_or_404(Reservation, pk=kwargs['pk'])
-        action = self.request.GET.get('action')  # что хотим сделать
+        booking = get_object_or_404(Reservation, pk=kwargs["pk"])
+        action = self.request.GET.get("action")
         user = self.request.user
 
-        # разрешаем только свои брони (или добавьте персонал)
-        if booking.user != user:
-            messages.error(self.request, 'Можно изменять только свои бронирования.')
-            return reverse('booking:booking_detail', kwargs={'pk': kwargs['pk']})
-
+        if booking.user != user and not (user.is_superuser or user.has_perm("booking.change_booking")):
+            messages.error(self.request, "Можно изменять только свои бронирования.")
+            return reverse("booking:booking_detail", kwargs={"pk": kwargs["pk"]})
         allowed = {
-            'cancel': ('confirmed',),
-            'complete': ('confirmed',),
-            'no_show': ('confirmed',),
+            "cancel": ("confirmed",),
+            "complete": ("confirmed",),
+            "no_show": ("confirmed",),
         }
 
         if action not in allowed:
-            messages.warning(self.request, 'Некорректное действие.')
-            return reverse('booking:booking_detail', kwargs={'pk': kwargs['pk']})
+            messages.warning(self.request, "Некорректное действие.")
+            return reverse("booking:booking_detail", kwargs={"pk": kwargs["pk"]})
 
         if booking.status not in allowed[action]:
             messages.info(
-                self.request,
-                f'Действие «{action}» недоступно для статуса «{booking.get_status_display()}».'
+                self.request, f"Действие «{action}» недоступно для статуса «{booking.get_status_display()}»."
             )
-            return reverse('booking:booking_detail', kwargs={'pk': kwargs['pk']})
+            return reverse("booking:booking_detail", kwargs={"pk": kwargs["pk"]})
 
             # меняем статус
-        status_map = {'cancel': 'canceled', 'complete': 'completed', 'no_show': 'no_show'}
+        status_map = {"cancel": "canceled", "complete": "completed", "no_show": "no_show"}
         booking.status = status_map[action]
-        booking.save(update_fields=['status'])
-        messages.success(
-            self.request,
-            f'Статус изменён на «{booking.get_status_display()}».'
-        )
+        booking.save(update_fields=["status"])
+        messages.success(self.request, f"Статус изменён на «{booking.get_status_display()}».")
 
-        return reverse('booking:booking_detail', kwargs={'pk': kwargs['pk']})
+        return reverse("booking:booking_detail", kwargs={"pk": kwargs["pk"]})
 
 
 class BookingDeleteView(LoginRequiredMixin, DeleteView):
@@ -339,15 +372,17 @@ class BookingDeleteView(LoginRequiredMixin, DeleteView):
     context_object_name = "booking"
     success_url = reverse_lazy("booking:booking_list")
 
+
 # ОБРАТНАЯ СВЯЗЬ
+
 
 class FeedbackCreateView(SuccessMessageMixin, CreateView):
     model = Feedback
     form_class = FeedbackCreateForm
-    success_message = 'Ваше письмо успешно отправлено администрации сайта'
-    template_name = 'booking/contacts.html'
-    extra_context = {'title': 'Контактная форма'}
-    success_url = reverse_lazy('booking:home')
+    success_message = "Ваше письмо успешно отправлено администрации сайта"
+    template_name = "booking/contacts.html"
+    extra_context = {"title": "Контактная форма"}
+    success_url = reverse_lazy("booking:home")
 
     def form_valid(self, form):
         if form.is_valid():
@@ -355,5 +390,7 @@ class FeedbackCreateView(SuccessMessageMixin, CreateView):
             feedback.ip_address = get_client_ip(self.request)
             if self.request.user.is_authenticated:
                 feedback.user = self.request.user
-            send_contact_email_message(feedback.subject, feedback.email, feedback.content, feedback.ip_address, feedback.user_id)
+            send_contact_email_message(
+                feedback.subject, feedback.email, feedback.content, feedback.ip_address, feedback.user_id
+            )
         return super().form_valid(form)

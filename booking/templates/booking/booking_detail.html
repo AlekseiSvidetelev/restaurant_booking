@@ -72,7 +72,11 @@
                   </a>
                 {% endif %}
 
-                {% if booking.status == 'confirmed' and perms.booking.can_update_status_reservation %}
+
+              </div>
+            </div>
+          {% endif %}
+          {% if booking.status == 'confirmed' and perms.booking.can_update_status_reservation or user.is_superuser %}
                   <a href="{% url 'booking:booking_status_update' booking.pk %}?action=complete"
                      class="btn btn-outline-success me-2">
                     <i class="bi bi-check-circle me-1"></i>Завершить
@@ -82,9 +86,6 @@
                     <i class="bi bi-person-x me-1"></i>Не явился
                   </a>
                 {% endif %}
-              </div>
-            </div>
-          {% endif %}
         </div>
       </div>
 

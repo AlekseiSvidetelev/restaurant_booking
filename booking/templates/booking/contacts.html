@@ -20,6 +20,7 @@
         </div>
 
         <div class="row">
+
             <!-- Контактная информация -->
 
             <div class="col-lg-6 mb-5">
@@ -79,8 +80,6 @@
 
             <!-- Форма обратной связи -->
 
-
-            <!-- Форма обратной связи (новая логика, старый стиль) -->
             <div class="col-lg-6 mb-5">
                 <div class="card border-0 bg-dark bg-opacity-50 h-100">
                     <div class="card-header bg-dark">
@@ -92,12 +91,10 @@
                         <form method="post" action="{% url 'booking:contact' %}">
                             {% csrf_token %}
 
-                            <!-- поля формы через as_p, но в «нашей» палитре -->
                             <div class="text-light">
                                 {{ form.as_p }}
                             </div>
 
-                            <!-- кнопка в том же стиле, что и была -->
                             <div class="d-grid mt-4">
                                 <button type="submit" class="btn btn-primary btn-lg py-2">
                                     <i class="bi bi-send me-2"></i>Отправить сообщение

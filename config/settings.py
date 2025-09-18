@@ -111,8 +111,6 @@ STATICFILES_DIRS = (BASE_DIR / "static",)
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-## Настройка медиа
-
 MEDIA_URL = "/media/"
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
@@ -122,8 +120,8 @@ AUTH_USER_MODEL = "users.User"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
-EMAIL_HOST = os.getenv('EMAIL_HOST')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT'))
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT"))
 EMAIL_HOST_USER = os.getenv("EMAIL_USER")
 EMAIL_HOST_PASSWORD = os.getenv("PASSWORD_EMAIL_USER")
 EMAIL_USE_TLS = False
@@ -134,4 +132,4 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 LOGIN_URL = "/users/login"
 
-HELP_EMAIL = [e.strip() for e in os.getenv('HELP_EMAIL', '').split(',') if e.strip()]
+HELP_EMAIL = [e.strip() for e in os.getenv("HELP_EMAIL", "").split(",") if e.strip()]
