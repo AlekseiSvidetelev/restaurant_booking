@@ -1,6 +1,9 @@
 import os
+from datetime import timedelta
 
 from pathlib import Path
+
+from celery.schedules import crontab
 from dotenv import load_dotenv
 
 load_dotenv(override=True)
@@ -32,6 +35,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "users",
     "booking",
+    'django_celery_beat'
 ]
 
 MIDDLEWARE = [
@@ -124,8 +128,8 @@ EMAIL_HOST = os.getenv("EMAIL_HOST")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT"))
 EMAIL_HOST_USER = os.getenv("EMAIL_USER")
 EMAIL_HOST_PASSWORD = os.getenv("PASSWORD_EMAIL_USER")
-EMAIL_USE_TLS = False
-EMAIL_USE_SSL = True
+EMAIL_USE_TLS = False if os.getenv("EMAIL_USE_TLS") == "False" else True  # False
+EMAIL_USE_SSL = True if os.getenv("EMAIL_USE_SSL") == "True" else False # True
 
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
@@ -133,3 +137,28 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 LOGIN_URL = "/users/login"
 
 HELP_EMAIL = [e.strip() for e in os.getenv("HELP_EMAIL", "").split(",") if e.strip()]
+
+
+CACHE_ENABLED = True
+if CACHE_ENABLED:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+            'LOCATION': os.getenv("LOCATION"),
+        }
+    }
+
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_TRACK_STARTED = True if os.getenv("CELERY_TASK_TRACK_STARTED") == "True" else False
+CELERY_TASK_TIME_LIMIT = int(os.getenv("CELERY_TASK_TIME_LIMIT_MINUTES", "30")) * 60
+CELERY_BEAT_SCHEDULER = os.getenv("CELERY_BEAT_SCHEDULER")
+
+
+CELERY_BEAT_SCHEDULE = {
+    'auto-complete-expired-bookings': {
+        'task': 'booking.tasks.auto_complete_expired_bookings',
+        'schedule': crontab(minute=59),
+    },
+}

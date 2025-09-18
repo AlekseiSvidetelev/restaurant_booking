@@ -175,8 +175,9 @@ class BookingListView(LoginRequiredMixin, ListView):
         if not (user.is_superuser or user.has_perm("booking.administrate_tables")):
             queryset = queryset.filter(user=user)
 
-        filter_type = self.request.GET.get("filter", "future")
         today_start = timezone.make_aware(datetime.combine(timezone.now().date(), datetime.min.time()))
+
+        filter_type = self.request.GET.get("filter", "future")
 
         if filter_type == "past":
             queryset = queryset.filter(reservation_date__lt=today_start)
@@ -184,12 +185,14 @@ class BookingListView(LoginRequiredMixin, ListView):
             pass
         else:
             queryset = queryset.filter(reservation_date__gte=today_start)
-        return queryset.annotate(
+
+        annotated_queryset = queryset.annotate(
             start_dt=Cast(
                 Concat("reservation_date", Value(" "), "start_time"),
                 output_field=DateTimeField(),
             )
         ).order_by("start_dt")
+        return annotated_queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -337,8 +340,8 @@ class BookingStatusUpdateView(LoginRequiredMixin, RedirectView):
         action = self.request.GET.get("action")
         user = self.request.user
 
-        if booking.user != user and not (user.is_superuser or user.has_perm("booking.change_booking")):
-            messages.error(self.request, "Можно изменять только свои бронирования.")
+        if booking.user != user and not (user.is_superuser or user.has_perm("booking.can_update_status_reservation")):
+            messages.error(self.request, "Нет прав на изменение статуса.")
             return reverse("booking:booking_detail", kwargs={"pk": kwargs["pk"]})
         allowed = {
             "cancel": ("confirmed",),
@@ -356,7 +359,6 @@ class BookingStatusUpdateView(LoginRequiredMixin, RedirectView):
             )
             return reverse("booking:booking_detail", kwargs={"pk": kwargs["pk"]})
 
-            # меняем статус
         status_map = {"cancel": "canceled", "complete": "completed", "no_show": "no_show"}
         booking.status = status_map[action]
         booking.save(update_fields=["status"])

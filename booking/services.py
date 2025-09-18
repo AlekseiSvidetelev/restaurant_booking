@@ -1,7 +1,10 @@
 from django.conf import settings
+from django.core.cache import cache
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
+from booking.models import Reservation
+from config.settings import CACHE_ENABLED
 
 from users.models import User
 
