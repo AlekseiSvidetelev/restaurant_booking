@@ -8,8 +8,7 @@
 
     IP Адрес отправителя: {{ ip }}
     Email отправителя: {{ email }}
-    {% if user %}Пользователь: {{ user.username }}{% endif %}
+    {% if user %}Пользователь: {{ user.first_name }} {{ user.last_name }}{% endif %}
 
-Команда сайта Django Base Project
 
 {% endautoescape %}

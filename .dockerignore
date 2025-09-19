@@ -1,0 +1,9 @@
+**
+!config
+!users
+!booking
+!manage.py
+!poetry.lock
+!pyproject.toml
+!constants.py
+

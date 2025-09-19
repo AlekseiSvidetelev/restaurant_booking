@@ -1,0 +1,104 @@
+services:
+  db:
+    image: postgres:17.6
+    env_file: .env
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: redis-cli ping
+      interval: 1s
+      timeout: 1s
+      retries: 5
+
+  backend:
+    build: .
+    command: bash -c "python manage.py migrate && python manage.py collectstatic -c --no-input && python manage.py runserver 0.0.0.0:8000"
+    env_file: .env
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      REDIS_URL: redis://redis:6379
+
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    volumes:
+      - django_static:/app/staticfiles
+
+  web:
+    image: nginx:1.25
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_started
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - django_static:/usr/share/nginx/html/static
+
+  celery:
+    build: .
+    command: celery -A config worker -l INFO
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
+    depends_on:
+      - db
+      - redis
+    healthcheck:
+      test: [ "CMD", "celery", "-A", "config", "inspect", "ping" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  celery_beat:
+    build: .
+    command: celery -A config beat -l INFO
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    environment:
+      POSTGRES_HOST: db
+    depends_on:
+      - db
+      - redis
+      - celery
+    healthcheck:
+      test: [ "CMD", "celery", "-A", "config", "beat", "check" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  pg_data:
+  django_static:

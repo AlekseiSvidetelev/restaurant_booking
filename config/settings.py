@@ -1,5 +1,4 @@
 import os
-from datetime import timedelta
 
 from pathlib import Path
 
@@ -35,7 +34,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "users",
     "booking",
-    'django_celery_beat'
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
@@ -110,8 +109,10 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_DIRS = (BASE_DIR / "static",)
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),]
+
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -128,9 +129,8 @@ EMAIL_HOST = os.getenv("EMAIL_HOST")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT"))
 EMAIL_HOST_USER = os.getenv("EMAIL_USER")
 EMAIL_HOST_PASSWORD = os.getenv("PASSWORD_EMAIL_USER")
-EMAIL_USE_TLS = False if os.getenv("EMAIL_USE_TLS") == "False" else True  # False
-EMAIL_USE_SSL = True if os.getenv("EMAIL_USE_SSL") == "True" else False # True
-
+EMAIL_USE_TLS = False if os.getenv("EMAIL_USE_TLS") == "False" else True
+EMAIL_USE_SSL = True if os.getenv("EMAIL_USE_SSL") == "True" else False
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
@@ -142,9 +142,9 @@ HELP_EMAIL = [e.strip() for e in os.getenv("HELP_EMAIL", "").split(",") if e.str
 CACHE_ENABLED = True
 if CACHE_ENABLED:
     CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-            'LOCATION': os.getenv("LOCATION"),
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": os.getenv("LOCATION"),
         }
     }
 
@@ -157,8 +157,8 @@ CELERY_BEAT_SCHEDULER = os.getenv("CELERY_BEAT_SCHEDULER")
 
 
 CELERY_BEAT_SCHEDULE = {
-    'auto-complete-expired-bookings': {
-        'task': 'booking.tasks.auto_complete_expired_bookings',
-        'schedule': crontab(minute=59),
+    "auto-complete-expired-bookings": {
+        "task": "booking.tasks.auto_complete_expired_bookings",
+        "schedule": crontab(minute=59),
     },
 }
