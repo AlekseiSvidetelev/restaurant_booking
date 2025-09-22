@@ -45,5 +45,70 @@ class User(AbstractUser):
             ("can_view_all_users", "Можно просматривать всех пользователей"),
         ]
 
+
+class Employee(models.Model):
+
+    POSTS = (
+        ("Senior Administrator", "Старший администратор"),
+        ("Administrator", "Администратор"),
+        ("Waiter", "Официант"),
+        ("Bartender", "Бармен"),
+        ("Sommelier", "Сомелье"),
+        ("Chef", "Шеф-повар"),
+        ("Cook", "Повар"),
+    )
+    EMPLOYEE_STATUSES = (
+        ("working", "Работает"),
+        ("fired", "Уволен"),
+        ("probationary_period", "Испытательный срок"),
+        ("training", "Отпуск"),
+    )
+    first_name = models.CharField(verbose_name="Имя", max_length=150)
+    last_name = models.CharField(verbose_name="Фамилия", max_length=150)
+    birthday = models.DateField(
+        verbose_name="Дата рождения",
+        blank=True,
+        null=True,
+        help_text="Введите дату рождения",
+    )
+    post = models.CharField(
+        choices=POSTS,
+        verbose_name="Должность",
+        help_text="Выберите должность",
+        max_length=150,
+    )
+    photo = models.ImageField(
+        upload_to="employee/avatars",
+        blank=True,
+        null=True,
+        verbose_name="Фото",
+    )
+    personal_data = models.TextField(
+        verbose_name="Личные данные",
+        blank=True,
+        null=True,
+        help_text="Введите личные данные",
+    )
+    date_employment = models.DateField(
+        verbose_name="Дата приема на работу",
+        blank=True,
+        null=True,
+        help_text="Введите дату приема на работу",
+    )
+    status = models.CharField(
+        max_length=150,
+        choices=EMPLOYEE_STATUSES,
+        default="working",
+        verbose_name="Статус",
+        help_text="Выберите статус",
+    )
+
+    class Meta:
+        verbose_name = "Сотрудник"
+        verbose_name_plural = "Сотрудники"
+        permissions = [
+            ("can_view_all_employees", "Может просматривать всех сотрудников"),
+        ]
+
     def __str__(self):
-        return self.email
+        return f"{self.first_name} {self.last_name}"

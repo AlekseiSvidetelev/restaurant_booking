@@ -2,7 +2,7 @@ from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 from django import forms
 from booking.forms import StyleFormMixin
 
-from users.models import User
+from users.models import User, Employee
 
 
 class UserRegisterForm(StyleFormMixin, UserCreationForm):  #
@@ -49,3 +49,11 @@ class UserProfileUpdateForm(StyleFormMixin, forms.ModelForm):
         if commit:
             instance.save()
         return instance
+
+
+class EmployeeForm(StyleFormMixin, forms.ModelForm):
+
+    class Meta:
+
+        model = Employee
+        fields = "__all__"

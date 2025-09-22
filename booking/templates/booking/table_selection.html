@@ -1,6 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+{% if messages %}
+  {% for m in messages %}
+    <div class="alert alert-{{ m.tags }} alert-dismissible fade show" role="alert">
+      {{ m }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
 <div class="container py-4">
     <h2 class="text-center mb-4">Выберите столик</h2>
     <p class="text-center mb-4">

@@ -12,6 +12,11 @@ from users.views import (
     UserListView,
     UserProfileView,
     UserProfileUpdateView,
+    EmployeeCreateView,
+    EmployeeListView,
+    EmployeeDetailView,
+    EmployeeUpdateView,
+    EmployeeDeleteView,
 )
 
 app_name = UsersConfig.name
@@ -40,7 +45,17 @@ urlpatterns = [
     path("profile/", UserProfileView.as_view(template_name="users/profile.html"), name="profile"),
     path(
         "profile/update/",
-        UserProfileUpdateView.as_view(template_name="users/profile_update.html"),
+        UserProfileUpdateView.as_view(),
         name="profile_update",
     ),
+    # Сотрудники
+    path(
+        "employees/",
+        EmployeeListView.as_view(),
+        name="employees",
+    ),
+    path("employees/create/", EmployeeCreateView.as_view(), name="employee_create"),
+    path("employees/<int:pk>/", EmployeeDetailView.as_view(), name="employee_detail"),
+    path("employees/<int:pk>/update/", EmployeeUpdateView.as_view(), name="employee_update"),
+    path("employees/<int:pk>/delete/", EmployeeDeleteView.as_view(), name="employee_delete"),
 ]

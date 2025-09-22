@@ -1,6 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import FormView, CreateView, UpdateView, DetailView
+from django.views.generic import FormView, CreateView, UpdateView, DetailView, DeleteView
 from django.utils import timezone
 
 from django.core.mail import send_mail
@@ -11,13 +12,19 @@ import secrets
 from booking.models import Reservation
 from config.settings import EMAIL_HOST_USER
 
-from .forms import UserRegisterForm, PasswordResetRequestForm, CustomSetPasswordForm, UserProfileUpdateForm
+from users.forms import (
+    UserRegisterForm,
+    PasswordResetRequestForm,
+    CustomSetPasswordForm,
+    UserProfileUpdateForm,
+    EmployeeForm,
+)
 
 from django.views.generic import ListView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.shortcuts import redirect
 from django.contrib import messages
-from .models import User
+from users.models import User, Employee
 
 
 class UserCreateView(CreateView):
@@ -116,14 +123,16 @@ class CustomPasswordResetConfirmView(FormView):
         return context
 
     def form_valid(self, form):
-        """Обработка валидной формы"""
+        """Обработка валидной формы + активация при необходимости."""
         token_age = timezone.now() - self.user.reset_token_created
         if token_age.total_seconds() > 24 * 3600:
             return render(self.request, "users/password_reset_expired.html")
         form.save()
+        if not self.user.is_active:
+            self.user.is_active = True
         self.user.reset_token = None
         self.user.reset_token_created = None
-        self.user.save()
+        self.user.save(update_fields=["password", "is_active", "reset_token", "reset_token_created"])
         return super().form_valid(form)
 
 
@@ -176,3 +185,72 @@ class UserProfileUpdateView(UpdateView):
 
     def get_object(self, queryset=None):
         return self.request.user
+
+
+class EmployeeListView(LoginRequiredMixin, ListView):
+
+    model = Employee
+    template_name = "users/employee_list.html"
+    context_object_name = "employees"
+
+    def dispatch(self, request, *args, **kwargs):
+        user = self.request.user
+        if not (user.has_perm("users.can_view_all_employees") or user.is_superuser):
+            raise PermissionDenied("Доступ ограничен.")
+        return super().dispatch(request, *args, **kwargs)
+
+
+class EmployeeDetailView(LoginRequiredMixin, DetailView):
+
+    model = Employee
+    template_name = "users/employee_detail.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        user = self.request.user
+        if not (user.has_perm("users.can_view_all_employees") or user.is_superuser):
+            raise PermissionDenied("Доступ ограничен.")
+        return super().dispatch(request, *args, **kwargs)
+
+
+class EmployeeCreateView(LoginRequiredMixin, CreateView):
+
+    model = Employee
+    form_class = EmployeeForm
+    template_name = "users/employee_form.html"
+    success_url = reverse_lazy("users:employees")
+
+    def dispatch(self, request, *args, **kwargs):
+        user = self.request.user
+        if not (user.has_perm("users.can_view_all_employees") or user.is_superuser):
+            raise PermissionDenied("Доступ ограничен.")
+        return super().dispatch(request, *args, **kwargs)
+
+
+class EmployeeUpdateView(LoginRequiredMixin, UpdateView):
+
+    model = Employee
+    form_class = EmployeeForm
+    template_name = "users/employee_form.html"
+    context_object_name = "object"
+
+    def get_success_url(self):
+        return reverse("users:employee_detail", args=[self.object.pk])
+
+    def dispatch(self, request, *args, **kwargs):
+        user = self.request.user
+        if not (user.has_perm("users.can_view_all_employees") or user.is_superuser):
+            raise PermissionDenied("Доступ ограничен.")
+        return super().dispatch(request, *args, **kwargs)
+
+
+class EmployeeDeleteView(LoginRequiredMixin, DeleteView):
+
+    model = Employee
+    template_name = "users/employee_confirm_delete.html"
+    success_url = reverse_lazy("users:employees")
+
+    def dispatch(self, request, *args, **kwargs):
+        user = self.request.user
+        if not (user.has_perm("users.can_view_all_employees") or user.is_superuser):
+            raise PermissionDenied("Доступ ограничен.")
+        return super().dispatch(request, *args, **kwargs)

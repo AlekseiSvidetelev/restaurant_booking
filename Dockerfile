@@ -10,7 +10,3 @@ RUN poetry config virtualenvs.create false && \
     poetry install --no-root --only main
 
 COPY . .
-
-CMD ["python", "manage.py", "csu"]
-
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

@@ -1,0 +1,44 @@
+[
+{
+    "model": "users.employee",
+    "pk": 1,
+    "fields": {
+        "first_name": "Александр",
+        "last_name": "Иванов",
+        "birthday": "1990-12-12",
+        "post": "Chef",
+        "photo": "employee/avatars/65127571900311f0a76432bb8cbdc4e9.jpg",
+        "personal_data": "Шеф-повар и основатель. Опыт работы более 20 лет. Автор многих блюд в нашем меню. Проходи стажировку в лучших ресторанах Франции.",
+        "date_employment": "2020-09-22",
+        "status": "working"
+    }
+},
+{
+    "model": "users.employee",
+    "pk": 4,
+    "fields": {
+        "first_name": "Дмитрий",
+        "last_name": "Сидоров",
+        "birthday": "1985-12-12",
+        "post": "Sommelier",
+        "photo": "employee/avatars/c7602021900211f0832b7eeb1029c504_etHpC02.jpg",
+        "personal_data": "Сертифицированный сомелье международного уровня. Поможет подобрать идеальное вино к вашему блюду.",
+        "date_employment": "2020-09-22",
+        "status": "working"
+    }
+},
+{
+    "model": "users.employee",
+    "pk": 5,
+    "fields": {
+        "first_name": "Елена",
+        "last_name": "Петрова",
+        "birthday": "1995-02-12",
+        "post": "Administrator",
+        "photo": "employee/avatars/d8720f9f900111f0b4b3bee3a1ddfe1f.jpg",
+        "personal_data": "Специалист с 15-летним опытом в ресторанном бизнесе. Следит за тем, чтобы каждый гость чувствовал себя особенным.",
+        "date_employment": "2022-09-22",
+        "status": "working"
+    }
+}
+]

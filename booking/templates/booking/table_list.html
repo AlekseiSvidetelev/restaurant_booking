@@ -30,8 +30,8 @@
         <table class="table table-dark table-hover align-middle mb-0">
           <thead>
             <tr>
-              <th>№</th><th>Тип</th><th>Мест</th><th>Гости (min-max)</th>
-              <th>Активен</th><th>Броней</th><th></th>
+              <th>№</th><th>Тип</th><th>Гости (min-max)</th>
+              <th>Активен</th><th>Броней</th><th>Действие</th>
             </tr>
           </thead>
           <tbody>
@@ -39,7 +39,6 @@
               <tr>
                 <td><strong>{{ table.number }}</strong></td>
                 <td>{{ table.get_table_type_display }}</td>
-                <td>{{ table.seats }}</td>
                 <td>{{ table.min_guests }} – {{ table.max_guests }}</td>
                 <td>
                   {% if table.is_active %}

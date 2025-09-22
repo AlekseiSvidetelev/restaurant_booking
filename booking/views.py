@@ -2,6 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
+
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import (
@@ -21,7 +22,9 @@ from datetime import datetime, timedelta
 
 from booking.services import get_client_ip, send_contact_email_message
 from django.db.models.functions import Cast, Concat
-from django.db.models import DateTimeField, Value
+from django.db.models import DateTimeField, Value, CharField
+
+from users.models import Employee
 
 
 class HomeView(TemplateView):
@@ -33,7 +36,14 @@ class HomeView(TemplateView):
 class AboutView(TemplateView):
     """О нас"""
 
+    model = Employee
     template_name = "booking/history_restaurant.html"
+    context_object_name = "employees"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["employees"] = Employee.objects.filter(status="working")
+        return context
 
 
 class ContactsView(TemplateView):
@@ -186,12 +196,19 @@ class BookingListView(LoginRequiredMixin, ListView):
         else:
             queryset = queryset.filter(reservation_date__gte=today_start)
 
+        # Исправленная аннотация с явным указанием output_field
         annotated_queryset = queryset.annotate(
             start_dt=Cast(
-                Concat("reservation_date", Value(" "), "start_time"),
+                Concat(
+                    Cast("reservation_date", output_field=CharField()),
+                    Value(" "),
+                    Cast("start_time", output_field=CharField()),
+                    output_field=CharField(),  # Явно указываем выходной тип для Concat
+                ),
                 output_field=DateTimeField(),
             )
         ).order_by("start_dt")
+
         return annotated_queryset
 
     def get_context_data(self, **kwargs):

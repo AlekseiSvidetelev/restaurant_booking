@@ -71,8 +71,10 @@
                         <td>
                             <a class="btn btn-sm btn-outline-info"
                                href="{% url 'booking:booking_detail' reservation.id %}">Открыть</a>
+                            {% if reservation.status == 'confirmed' %}
                             <a class="btn btn-sm btn-danger"
                                href="{% url 'booking:booking_status_update' reservation.pk %}?action=cancel">Отменить</a>
+                            {% endif %}
                         </td>
                     </tr>
                     {% endfor %}

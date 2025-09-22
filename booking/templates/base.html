@@ -110,6 +110,13 @@
                     </a>
                 </li>
                 {% endif %}
+                {% if user.is_superuser or perms.users.can_view_all_employees %}
+                <li class="nav-item">
+                    <a class="nav-link btn btn-primary btn-sm mx-1" href="{% url 'users:employees' %}">
+                        <i class="bi bi-people me-2"></i> <strong>Сотрудники</strong>
+                    </a>
+                </li>
+                {% endif %}
             </ul>
 
             <div class="d-flex">

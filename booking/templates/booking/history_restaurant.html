@@ -28,9 +28,14 @@
             <div class="card-body">
                 <div class="row align-items-center">
                     <div class="col-md-6">
-                        <p class="text-light">Ресторан "Гурман" был основан в 2005 году шеф-поваром Александром Ивановым, который мечтал создать место, где гости могли бы насладиться изысканной кухней в уютной атмосфере.</p>
-                        <p class="text-light">Начиная с небольшого семейного ресторана на 30 посадочных мест, мы выросли в одно из самых популярных гастрономических заведений города. За эти годы мы сохранили теплую, домашнюю атмосферу, дополнив ее высоким уровнем сервиса и авторскими блюдами.</p>
-                        <p class="text-light">В 2015 году мы провели масштабную реконструкцию, расширив пространство и создав отдельные зоны для романтических ужинов, бизнес-ланчей и больших компаний.</p>
+                        <p class="text-light">Ресторан "Гурман" был основан в 2005 году шеф-поваром Александром
+                            Ивановым, который мечтал создать место, где гости могли бы насладиться изысканной кухней в
+                            уютной атмосфере.</p>
+                        <p class="text-light">Начиная с небольшого семейного ресторана на 30 посадочных мест, мы выросли
+                            в одно из самых популярных гастрономических заведений города. За эти годы мы сохранили
+                            теплую, домашнюю атмосферу, дополнив ее высоким уровнем сервиса и авторскими блюдами.</p>
+                        <p class="text-light">В 2015 году мы провели масштабную реконструкцию, расширив пространство и
+                            создав отдельные зоны для романтических ужинов, бизнес-ланчей и больших компаний.</p>
                     </div>
                     <div class="col-md-6 text-center">
                         <img src="{% static 'images/restaurant-history.jpg' %}" alt="История ресторана Гурман" class="img-fluid rounded">
@@ -49,7 +54,8 @@
                 <div class="row">
                     <div class="col-lg-6 mb-4">
                         <h3 class="text-light border-bottom pb-2">Наша миссия</h3>
-                        <p class="text-light">Создавать незабываемые гастрономические впечатления, сочетающие в себе традиционные вкусы и современные тенденции, в атмосфере гостеприимства и комфорта.</p>
+                        <p class="text-light">Создавать незабываемые гастрономические впечатления, сочетающие в себе
+                            традиционные вкусы и современные тенденции, в атмосфере гостеприимства и комфорта.</p>
                     </div>
                     <div class="col-lg-6">
                         <h3 class="text-light border-bottom pb-2">Наши ценности</h3>
@@ -83,43 +89,43 @@
                 </h2>
             </div>
             <div class="card-body">
-                <p class="text-light text-center mb-5">Наша команда - это профессионалы с многолетним опытом, которые с любовью создают для вас неповторимую атмосферу и вкусные блюда.</p>
-                
-                <div class="row">
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100 border-0 bg-dark">
-                            <img src="{% static 'images/chef.jpg' %}" class="card-img-top" alt="Шеф-повар">
-                            <div class="card-body text-center">
-                                <h5 class="card-title text-light">Александр Иванов</h5>
-                                <p class="card-text text-muted">Шеф-повар и основатель</p>
-                                <p class="card-text text-light">Опыт работы более 20 лет. Автор многих блюд в нашем меню. Проходи стажировку в лучших ресторанах Франции и Италии.</p>
-                            </div>
-                        </div>
-                    </div>
+                <p class="text-light text-center mb-5">Наша команда - это профессионалы с многолетним опытом, которые с
+                    любовью создают для вас неповторимую атмосферу и вкусные блюда.</p>
 
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100 border-0 bg-dark">
-                            <img src="{% static 'images/manager.jpg' %}" class="card-img-top" alt="Управляющий">
-                            <div class="card-body text-center">
-                                <h5 class="card-title text-light">Елена Петрова</h5>
-                                <p class="card-text text-muted">Управляющий</p>
-                                <p class="card-text text-light">Специалист с 15-летним опытом в ресторанном бизнесе. Следит за тем, чтобы каждый гость чувствовал себя особенным.</p>
-                            </div>
-                        </div>
-                    </div>
+                <section class="container py-5">
+                    <h2 class="text-center text-light mb-4">Наша команда</h2>
 
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100 border-0 bg-dark">
-                            <img src="{% static 'images/sommelier.jpg' %}" class="card-img-top" alt="Сомелье">
-                            <div class="card-body text-center">
-                                <h5 class="card-title text-light">Дмитрий Сидоров</h5>
-                                <p class="card-text text-muted">Сомелье</p>
-                                <p class="card-text text-light">Сертифицированный сомелье международного уровня. Поможет подобрать идеальное вино к вашему блюду.</p>
+                    <div class="row g-4">
+                        {% for employee in employees %}
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100 border-0 bg-dark text-center">
+                                {% if employee.photo and employee.photo.url %}
+                                <img src="{{ employee.photo.url }}" class="card-img-top rounded-circle p-2"
+                                     alt="Фото {{ employee.first_name }}"
+                                     style="card-img-top">
+                                {% else %}
+                                <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center mx-auto mt-3"
+                                     style="width:200px; height:200px;">
+                                    <i class="bi bi-person fs-1 text-white"></i>
+                                </div>
+                                {% endif %}
+
+                                <div class="card-body">
+                                    <h5 class="card-title text-light">{{ employee.first_name }} {{ employee.last_name }}</h5>
+                                    <p class="card-text text-muted mb-2">{{ employee.get_post_display }}</p>
+                                    <p class="card-text text-light small">
+                                        {{ employee.personal_data|truncatechars:120|default:"Опытный специалист" }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
+                        {% empty %}
+                        <div class="col-12 text-center text-white-50">
+                            <p>Персонал пока не добавлен.</p>
+                        </div>
+                        {% endfor %}
                     </div>
-                </div>
-                
+                </section>
                 <div class="text-center mt-4">
                     <a href="{% url 'booking:booking_start' %}" class="btn btn-primary btn-lg">
                         <i class="bi bi-calendar-check me-2"></i>Забронировать столик

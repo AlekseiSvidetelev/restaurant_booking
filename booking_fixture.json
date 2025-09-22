@@ -1,0 +1,130 @@
+[
+{
+    "model": "booking.table",
+    "pk": 1,
+    "fields": {
+        "number": 1,
+        "table_type": "standard",
+        "description": "У окна",
+        "is_active": true,
+        "min_guests": 1,
+        "max_guests": 2,
+        "photo": "tables/previews/20ce588c90a211f0b37f664cd2c4d64b.jpg"
+    }
+},
+{
+    "model": "booking.table",
+    "pk": 2,
+    "fields": {
+        "number": 2,
+        "table_type": "standard",
+        "description": "По центру",
+        "is_active": true,
+        "min_guests": 1,
+        "max_guests": 3,
+        "photo": ""
+    }
+},
+{
+    "model": "booking.reservation",
+    "pk": 2,
+    "fields": {
+        "user": 29,
+        "table": 1,
+        "guests_count": 1,
+        "reservation_date": "2025-09-22",
+        "start_time": "18:28:00",
+        "end_time": "20:28:00",
+        "duration": 2,
+        "status": "canceled",
+        "special_requests": "",
+        "created_at": "2025-09-22T15:28:11.344Z",
+        "updated_at": "2025-09-22T15:28:11.344Z"
+    }
+},
+{
+    "model": "booking.reservation",
+    "pk": 3,
+    "fields": {
+        "user": 29,
+        "table": 2,
+        "guests_count": 1,
+        "reservation_date": "2025-09-22",
+        "start_time": "16:32:00",
+        "end_time": "18:32:00",
+        "duration": 2,
+        "status": "canceled",
+        "special_requests": "",
+        "created_at": "2025-09-22T15:33:06.546Z",
+        "updated_at": "2025-09-22T15:33:06.546Z"
+    }
+},
+{
+    "model": "booking.reservation",
+    "pk": 4,
+    "fields": {
+        "user": 29,
+        "table": 2,
+        "guests_count": 1,
+        "reservation_date": "2025-09-22",
+        "start_time": "18:34:00",
+        "end_time": "20:34:00",
+        "duration": 2,
+        "status": "confirmed",
+        "special_requests": "",
+        "created_at": "2025-09-22T15:34:51.968Z",
+        "updated_at": "2025-09-22T15:34:51.968Z"
+    }
+},
+{
+    "model": "booking.reservation",
+    "pk": 5,
+    "fields": {
+        "user": 29,
+        "table": 2,
+        "guests_count": 1,
+        "reservation_date": "2025-09-22",
+        "start_time": "20:35:00",
+        "end_time": "22:35:00",
+        "duration": 2,
+        "status": "confirmed",
+        "special_requests": "",
+        "created_at": "2025-09-22T15:36:13.561Z",
+        "updated_at": "2025-09-22T15:36:13.561Z"
+    }
+},
+{
+    "model": "booking.reservation",
+    "pk": 6,
+    "fields": {
+        "user": 2,
+        "table": 1,
+        "guests_count": 1,
+        "reservation_date": "2025-09-23",
+        "start_time": "10:52:00",
+        "end_time": "12:52:00",
+        "duration": 2,
+        "status": "canceled",
+        "special_requests": "",
+        "created_at": "2025-09-22T19:54:47.955Z",
+        "updated_at": "2025-09-22T19:54:47.955Z"
+    }
+},
+{
+    "model": "booking.reservation",
+    "pk": 7,
+    "fields": {
+        "user": 2,
+        "table": 2,
+        "guests_count": 1,
+        "reservation_date": "2025-09-27",
+        "start_time": "18:13:00",
+        "end_time": "20:13:00",
+        "duration": 2,
+        "status": "confirmed",
+        "special_requests": "",
+        "created_at": "2025-09-22T20:13:14.725Z",
+        "updated_at": "2025-09-22T20:13:14.725Z"
+    }
+}
+]
