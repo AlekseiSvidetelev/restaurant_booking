@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from django import forms
 
 from django.forms import BooleanField, Form, DateField, DateInput, TimeField, TimeInput, IntegerField, NumberInput
@@ -5,8 +7,8 @@ from django.forms import BooleanField, Form, DateField, DateInput, TimeField, Ti
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-
 from booking.models import Table, Feedback
+from constants import WORK_SCHEDULE
 
 
 class StyleFormMixin:
@@ -76,18 +78,30 @@ class BookingParametersForm(Form):
         cleaned_data = super().clean()
         reservation_date = cleaned_data.get("reservation_date")
         start_time = cleaned_data.get("start_time")
+        duration = cleaned_data.get("duration")
 
         now = timezone.now()
-        print(now)
-        print(now.date())
-        print(reservation_date)
-        print(now.time())
-        print(start_time)
+
         if reservation_date < now.date():
             raise ValidationError("Нельзя выбрать прошедшую дату.")
         if reservation_date == now.date():
             if start_time < now.time():
                 raise ValidationError("Нельзя выбрать прошедшее время.")
+        if reservation_date and start_time and duration:
+            day_of_week = reservation_date.weekday()
+            work_start, work_end = WORK_SCHEDULE.get(day_of_week, (None, None))
+            if work_start is None or work_end is None:
+                raise ValidationError("В этот день заведение закрыто.")
+            if not (work_start <= start_time < work_end):
+                raise ValidationError(f"Ресторан работает с {work_start} до {work_end}.")
+            start_min = start_time.hour * 60 + start_time.minute
+            end_min = work_end.hour * 60 + work_end.minute
+            if start_min + duration * 60 > end_min:
+                raise ValidationError(
+                    f"Выбранное время ({start_time}) и длительность ({duration} ч.) "
+                    f"выходят за рамки рабочего дня (закрытие в {work_end})."
+                )
+
         return cleaned_data
 
 

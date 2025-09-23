@@ -13,17 +13,26 @@
 
 <div class="container py-4">
     <h2 class="text-center mb-4">Выберите столик</h2>
-    <p class="text-center mb-4">
-        На {{ reservation_date }} в {{ start_time|time:"H:i" }}
-        на {{ duration }} часа для {{ guests_count }} гостей
-    </p>
 
     {% if tables %}
     <div class="row">
         {% for table in tables %}
         <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
+            <div class="card h-100 text-center">
+
+                <!-- Фото стола -->
+                {% if table.photo and table.photo.url %}
+                    <img src="{{ table.photo.url }}" alt="Стол №{{ table.number }}"
+                         class="card-img-top"
+                         style="height: 180px; object-fit: cover;">
+                {% else %}
+                    <div class="bg-secondary d-flex align-items-center justify-content-center"
+                         style="height: 180px;">
+                        <i class="bi bi-image fs-1 text-white"></i>
+                    </div>
+                {% endif %}
+
+                <div class="card-body">
                     <h5 class="card-title">Стол №{{ table.number }}</h5>
                     <p class="card-text">
                         {{ table.get_table_type_display }}<br>
