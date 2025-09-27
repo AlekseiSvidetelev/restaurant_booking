@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Сотрудник #{{ object.id }}{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+
+            <!-- Карточка сотрудника -->
+            <div class="card card-glass mb-4">
+                <div class="card-body">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                        <h1 class="h4 mb-0">{{ object.user.first_name }} {{ object.user.last_name }}</h1>
+                        <span class="badge bg-secondary">{{ object.get_post_display }}</span>
+                    </div>
+
+                    <div class="row g-2 text-white-50">
+                        <!-- Фото -->
+                        <div class="col-sm-4">Фото:</div>
+                        <div class="col-sm-8">
+                            {% if object.photo and object.photo.url %}
+                                <img src="{{ object.photo.url }}" alt="Фото {{ object.first_name }}"
+                                     class="img-thumbnail img-fluid rounded-circle"
+                                     style="width: 120px; height: 120px; object-fit: cover;">
+                            {% else %}
+                                <div class="bg-dark rounded-circle d-flex align-items-center justify-content-center"
+                                     style="width: 120px; height: 120px;">
+                                    <i class="bi bi-person fs-1 text-muted"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Должность -->
+                        <div class="col-sm-4">Должность:</div>
+                        <div class="col-sm-8 text-white">{{ object.get_post_display }}</div>
+
+                        <!-- Статус -->
+                        <div class="col-sm-4">Статус:</div>
+                        <div class="col-sm-8">
+                            <span class="badge
+                                {% if object.status == 'working' %}bg-success
+                                {% elif object.status == 'fired' %}bg-danger
+                                {% else %}bg-warning{% endif %}">
+                                {{ object.get_status_display }}
+                            </span>
+                        </div>
+
+                        <!-- Дата рождения -->
+                        <div class="col-sm-4">Дата рождения:</div>
+                        <div class="col-sm-8 text-white">
+                            {{ object.birthday|date:"d.m.Y"|default:"—" }}
+                        </div>
+
+                        <!-- Дата приёма -->
+                        <div class="col-sm-4">Дата приёма:</div>
+                        <div class="col-sm-8 text-white">
+                            {{ object.date_employment|date:"d.m.Y"|default:"—" }}
+                        </div>
+
+                        <!-- Email -->
+                        <div class="col-sm-4">Email:</div>
+                        <div class="col-sm-8 text-white">
+                            {{ object.user.email }}
+                        </div>
+
+                        <!-- Личные данные -->
+                        {% if object.personal_data %}
+                            <div class="col-sm-4">Личные данные:</div>
+                            <div class="col-sm-8 text-white">{{ object.personal_data|linebreaksbr }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Кнопки управления -->
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{% url 'users:employees' %}" class="btn btn-outline-light">
+                    <i class="bi bi-arrow-left me-1"></i>К списку
+                </a>
+                {% if perms.users.change_employee or user.is_superuser %}
+                    <a href="{% url 'users:employee_update' object.pk %}" class="btn btn-primary">
+                        <i class="bi bi-pencil me-1"></i>Редактировать
+                    </a>
+                {% endif %}
+                {% if perms.users.delete_employee or user.is_superuser %}
+                    <a href="{% url 'users:employee_delete' object.pk %}" class="btn btn-danger">
+                        <i class="bi bi-trash me-1"></i>Удалить
+                    </a>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}

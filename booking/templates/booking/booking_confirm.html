@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0">
+                <div class="card-header bg-dark text-center py-4">
+                    <h2 class="mb-0 text-light">
+                        <i class="bi bi-check-circle me-2"></i>Подтверждение бронирования
+                    </h2>
+                </div>
+                <div class="card-body bg-secondary bg-opacity-10">
+                    {% if booking_params and table and start_time %}
+
+                    <div class="card bg-dark border-0 mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title text-light">Детали бронирования</h5>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Дата:</div>
+                                <div class="col-7 text-light">{{ booking_params.reservation_date }}</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Время:</div>
+                                <div class="col-7 text-light">{{ start_time|time:"H:i" }} - {{ end_time|time:"H:i" }}</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Гости:</div>
+                                <div class="col-7 text-light">{{ booking_params.guests_count }} человек</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Длительность:</div>
+                                <div class="col-7 text-light">{{ booking_params.duration }} часа</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Стол:</div>
+                                <div class="col-7 text-light">№{{ table.number }}, {{ table.get_table_type_display }}</div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Форма подтверждения -->
+                    <form method="post">
+                        {% csrf_token %}
+
+
+                        <input type="hidden" name="reservation_date" value="{{ booking_params.reservation_date }}">
+                        <input type="hidden" name="start_time" value="{{ booking_params.start_time }}">
+                        <input type="hidden" name="guests_count" value="{{ booking_params.guests_count }}">
+                        <input type="hidden" name="duration" value="{{ booking_params.duration }}">
+                        <input type="hidden" name="table" value="{{ table.id }}">
+
+
+                        <div class="mb-4">
+                            <label for="special_requests" class="form-label text-light">Особые пожелания</label>
+                            <textarea class="form-control" id="special_requests" name="special_requests" rows="3"
+                                      placeholder="Например: детский стул, аллергия на орехи и т.д."></textarea>
+                        </div>
+
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary py-2">
+                                <i class="bi bi-check-circle me-2"></i>Подтвердить бронирование
+                            </button>
+                            <a href="{% url 'booking:table_selection' %}" class="btn btn-outline-light py-2">
+                                <i class="bi bi-arrow-left me-2"></i>Вернуться к выбору столика
+                            </a>
+                        </div>
+                    </form>
+
+                    {% else %}
+                    <!-- Сообщение об ошибке, если данные не переданы -->
+                    <div class="alert alert-danger text-center">
+                        <h4 class="alert-heading">Ошибка!</h4>
+                        <p>Данные бронирования не найдены. Пожалуйста, начните процесс бронирования заново.</p>
+                        <hr>
+                        <a href="{% url 'booking:booking_start' %}" class="btn btn-primary">
+                            <i class="bi bi-arrow-left me-2"></i>Начать заново
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Автоматическое форматирование времени
+document.addEventListener('DOMContentLoaded', function() {
+    // Функция для форматирования времени (если нужно)
+    function formatTime(timeString) {
+        if (!timeString) return '';
+
+        // Если время уже в формате HH:MM, просто возвращаем его
+        if (timeString.match(/^\d{2}:\d{2}$/)) {
+            return timeString;
+        }
+
+        // Если время в формате HH:MM:SS, обрезаем секунды
+        if (timeString.match(/^\d{2}:\d{2}:\d{2}$/)) {
+            return timeString.substring(0, 5);
+        }
+
+        return timeString;
+    }
+
+    // Применяем форматирование ко всем элементам с временем
+    const timeElements = document.querySelectorAll('.time-format');
+    timeElements.forEach(el => {
+        el.textContent = formatTime(el.textContent);
+    });
+});
+</script>
+{% endblock %}

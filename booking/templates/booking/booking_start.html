@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h4 class="mb-0">Бронирование столика</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                        <ul class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label class="form-label">Дата</label>
+                            {{ form.reservation_date }}
+
+                            {% if form.reservation_date.errors %}
+                            <ul class="alert alert-danger">
+                                {% for error in form.reservation_date.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Время</label>
+                            {{ form.start_time }}
+
+                            {% if form.start_time.errors %}
+                            <ul class="alert alert-danger">
+                                {% for error in form.start_time.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Количество гостей</label>
+                            {{ form.guests_count }}
+
+                            {% if form.guests_count.errors %}
+                            <ul class="alert alert-danger">
+                                {% for error in form.guests_count.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Длительность (часы)</label>
+                            {{ form.duration }}
+
+                            {% if form.duration.errors %}
+                            <ul class="alert alert-danger">
+                                {% for error in form.duration.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            Найти свободные столики
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

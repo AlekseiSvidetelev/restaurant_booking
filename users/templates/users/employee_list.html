@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Список сотрудников{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+    <div class="card card-glass">
+        <div class="card-body">
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">Список сотрудников</h1>
+                <a href="{% url 'users:employee_create' %}" class="btn btn-primary">+ Добавить сотрудника</a>
+            </div>
+
+            <!-- таблица -->
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>ФИО</th>
+                        <th>Должность</th>
+                        <th>Статус</th>
+                        <th>Действие</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for employee in employees %}
+                    <tr>
+                        <td>{{ employee.id }}</td>
+                        <td>{{ employee.user.last_name }} {{ employee.user.first_name }}</td>
+                        <td>{{ employee.get_post_display }}</td>
+                        <td>{{ employee.get_status_display }}</td>
+                        <td>
+                            <a class="btn btn-sm btn-outline-primary"
+                               href="{% url 'users:employee_detail' employee.pk %}">Подробнее</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-white-50">Пока нет сотрудников</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}

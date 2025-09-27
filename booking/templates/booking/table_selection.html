@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if messages %}
+  {% for m in messages %}
+    <div class="alert alert-{{ m.tags }} alert-dismissible fade show" role="alert">
+      {{ m }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
+<div class="container py-4">
+    <h2 class="text-center mb-4">Выберите столик</h2>
+
+    {% if tables %}
+    <div class="row">
+        {% for table in tables %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 text-center">
+
+                <!-- Фото стола -->
+                {% if table.photo and table.photo.url %}
+                    <img src="{{ table.photo.url }}" alt="Стол №{{ table.number }}"
+                         class="card-img-top"
+                         style="height: 180px; object-fit: cover;">
+                {% else %}
+                    <div class="bg-secondary d-flex align-items-center justify-content-center"
+                         style="height: 180px;">
+                        <i class="bi bi-image fs-1 text-white"></i>
+                    </div>
+                {% endif %}
+
+                <div class="card-body">
+                    <h5 class="card-title">Стол №{{ table.number }}</h5>
+                    <p class="card-text">
+                        {{ table.get_table_type_display }}<br>
+                        До {{ table.seats }} гостей
+                    </p>
+                    <a href="{% url 'booking:booking_confirm' table.id %}" class="btn btn-primary">
+                        Выбрать этот стол
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-warning text-center">
+        К сожалению, свободных столиков нет. Попробуйте изменить параметры.
+    </div>
+    <div class="text-center">
+        <a href="{% url 'booking:booking_start' %}" class="btn btn-secondary">
+            Изменить параметры
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

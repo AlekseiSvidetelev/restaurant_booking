@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if messages %}
+  {% for m in messages %}
+    <div class="alert alert-{{ m.tags }} alert-dismissible fade show" role="alert">
+      {{ m }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
+<section class="py-5 mb-5 text-center text-white">
+    <div class="container py-4">
+        <h1 class="display-4 fw-bold mb-4">Добро пожаловать в ресторан "Гурман"</h1>
+        <p class="lead mb-4">Насладитесь изысканной кухней от нашего шеф-повара в уютной атмосфере. Идеальное место для романтических ужинов, семейных праздников и деловых встреч.</p>
+        <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+            <a href="{% url 'booking:booking_start' %}" class="btn btn-primary btn-lg">
+                <i class="bi bi-calendar-check me-2"></i>Забронировать столик
+            </a>
+            <a href="media/menu/restaurant_menu.pdf" download="document_name.pdf" class="btn btn-outline-light btn-lg">
+
+                <i class="bi bi-journal-text me-2"> </i>Скачать меню
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 mb-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-white mb-3">О нашем ресторане</h2>
+            <p class="lead text-white">Ресторан "Гурман" — это место, где встречаются изысканный вкус, уютная атмосфера и безупречный сервис.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="glass-card card h-100 text-center border-0">
+                    <div class="card-body p-4">
+                        <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="bi bi-egg-fried fs-1 text-white"></i>
+                        </div>
+                        <h4 class="card-title text-white">Авторская кухня</h4>
+                        <p class="card-text">Наш шеф-повар создает уникальные блюда, сочетающие традиционные рецепты и современные тенденции.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="glass-card card h-100 text-center border-0">
+                    <div class="card-body p-4">
+                        <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="bi bi-wine-glass fs-1 text-white"></i>
+                        </div>
+                        <h4 class="card-title text-white">Винная карта</h4>
+                        <p class="card-text">Широкий выбор premium-вин от лучших производителей мира к каждому блюду.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="glass-card card h-100 text-center border-0">
+                    <div class="card-body p-4">
+                        <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="bi bi-music-note-beamed fs-1 text-white"></i>
+                        </div>
+                        <h4 class="card-title text-white">Живая музыка</h4>
+                        <p class="card-text">По вечерам в нашем ресторане играет живая музыка, создающая особую атмосферу.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 mb-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 bg-dark bg-opacity-50 h-100">
+                    <div class="card-body text-center">
+                        <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                            <i class="bi bi-truck fs-2 text-white"></i>
+                        </div>
+                        <h4 class="card-title text-light">Доставка</h4>
+                        <p class="card-text text-light">Мы осуществляем доставку в радиусе 10 км от ресторана. Минимальный заказ — 1000 руб.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 bg-dark bg-opacity-50 h-100">
+                    <div class="card-body text-center">
+                        <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                            <i class="bi bi-credit-card fs-2 text-white"></i>
+                        </div>
+                        <h4 class="card-title text-light">Оплата</h4>
+                        <p class="card-text text-light">Мы принимаем наличные, банковские карты и электронные платежи.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 bg-dark bg-opacity-50 h-100">
+                    <div class="card-body text-center">
+                        <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                            <i class="bi bi-calendar-event fs-2 text-white"></i>
+                        </div>
+                        <h4 class="card-title text-light">Мероприятия</h4>
+                        <p class="card-text text-light">Организуем банкеты, корпоративы и другие мероприятия до 50 человек.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+</section>
+
+<section class="py-5" id="map-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">Наш адрес</h2>
+            <p class="lead">Посмотрите наше расположение на карте</p>
+        </div>
+
+        <div class="card border-0 bg-dark bg-opacity-50 mb-5">
+            <div class="card-header bg-dark">
+                <h2 class="text-light mb-0">
+                    <i class="bi bi-map me-2"></i>Как нас найти
+                </h2>
+            </div>
+            <div class="card-body p-0">
+                <!-- Замените src на реальную карту -->
+                <div class="ratio ratio-16x9">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2245.37278924566!2d37.61729931593126!3d55.75582698055313!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46b54a50b315e573%3A0xa886bf5a3d9b2e68!2z0JzQvtGB0LrQvtCy0YHQutC40Lkg0JrRgNC10LzQu9GM!5e0!3m2!1sru!2sru!4v1611060351005!5m2!1sru!2sru"
+                            frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+
+    </div>
+</section>
+
+{% endblock %}

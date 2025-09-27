@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Профиль пользователя{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card border-0 shadow-lg rounded-4 card-hover">
+            <div class="card-header btn-primary text-white text-center py-4">
+                <h4><i class="bi bi-person-circle me-2"></i>Ваш профиль</h4>
+            </div>
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    {% if profile.avatar %}
+                        <img src="{{ profile.avatar.url }}"
+                             class="img-fluid rounded-circle mb-3"
+                             alt="Аватар"
+                             style="width: 150px; height: 150px; object-fit: cover;">
+                    {% else %}
+                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mb-3"
+                             style="width: 150px; height: 150px; margin: 0 auto;">
+                            <i class="bi bi-person fs-1 text-muted"></i>
+                        </div>
+                    {% endif %}
+                    <h3>
+                        {% if profile.first_name or profile.last_name %}
+                            {{ profile.first_name }} {{ profile.last_name }}
+                        {% else %}
+                            {{ profile.email }}
+                        {% endif %}
+                    </h3>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <p class="mb-1"><strong>Email:</strong></p>
+                        <p>{{ profile.email }}</p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p class="mb-1"><strong>Имя:</strong></p>
+                        <p>{{ profile.first_name|default:"Не указано" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-1"><strong>Фамилия:</strong></p>
+                        <p>{{ profile.last_name|default:"Не указана" }}</p>
+                    </div>
+                </div>
+
+                {% if profile.phone %}
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <p class="mb-1"><strong>Телефон:</strong></p>
+                        <p>{{ profile.phone }}</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p class="mb-1"><strong>Telegram:</strong></p>
+                        <p>
+                            {% if profile.tg_name %}
+                                @{{ profile.tg_name }}
+                            {% else %}
+                                Не указан
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mt-4 border-top pt-4">
+                    <h5 class="mb-3">Статистика бронирований</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="bi me-2">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">{{ reservations_count|default:0 }}</h5>
+                                    <p class="card-text">Всего бронирований</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="bi me-2">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">{{ active_reservations|default:0 }}</h5>
+                                    <p class="card-text">Активных бронирований</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <a href="{% url 'users:profile_update' %}" class="btn btn-primary">
+                        <i class="bi bi-pencil-square me-1"></i>Редактировать профиль
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
