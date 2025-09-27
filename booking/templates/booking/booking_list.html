@@ -64,6 +64,7 @@
                     <span class="badge
                       {% if reservation.status == 'confirmed' %}bg-success
                       {% elif reservation.status == 'canceled' %}bg-danger
+                      {% elif reservation.status == 'no_show' %}bg-warning
                       {% else %}bg-info{% endif %}">
                       {{ reservation.get_status_display }}
                     </span>

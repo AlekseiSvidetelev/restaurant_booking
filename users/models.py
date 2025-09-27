@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -45,6 +46,12 @@ class User(AbstractUser):
             ("can_view_all_users", "Можно просматривать всех пользователей"),
         ]
 
+    def __str__(self):
+        if self.first_name and self.last_name:
+            return f"{self.first_name} {self.last_name}"
+        else:
+            return self.email
+
 
 class Employee(models.Model):
 
@@ -63,8 +70,12 @@ class Employee(models.Model):
         ("probationary_period", "Испытательный срок"),
         ("training", "Отпуск"),
     )
-    first_name = models.CharField(verbose_name="Имя", max_length=150)
-    last_name = models.CharField(verbose_name="Фамилия", max_length=150)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="employee",
+        verbose_name="Пользователь",
+    )
     birthday = models.DateField(
         verbose_name="Дата рождения",
         blank=True,
@@ -109,6 +120,7 @@ class Employee(models.Model):
         permissions = [
             ("can_view_all_employees", "Может просматривать всех сотрудников"),
         ]
+        ordering = ["id"]
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return f"{self.user.first_name} {self.user.last_name}"

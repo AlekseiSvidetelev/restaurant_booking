@@ -125,13 +125,14 @@ class TableDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         now = timezone.now()
-        today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
 
-        context["reservations"] = self.object.reservation_set.filter(
-            status__in=["confirmed"],
-            reservation_date__gte=today_start.date(),
-            end_time__gt=now.time() if now.date() == today_start.date() else None,
-        ).order_by("reservation_date", "start_time")
+        context["reservations"] = (
+            self.object.reservation_set.filter(
+                status="confirmed",
+                reservation_date__gte=now.date(),
+            )
+            .order_by("reservation_date", "start_time")
+        )
 
         context["today"] = timezone.now().date()
         return context

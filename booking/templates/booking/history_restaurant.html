@@ -111,10 +111,10 @@
                                 {% endif %}
 
                                 <div class="card-body">
-                                    <h5 class="card-title text-light">{{ employee.first_name }} {{ employee.last_name }}</h5>
+                                    <h5 class="card-title text-light">{{ employee.user.first_name }} {{ employee.user.last_name }}</h5>
                                     <p class="card-text text-muted mb-2">{{ employee.get_post_display }}</p>
                                     <p class="card-text text-light small">
-                                        {{ employee.personal_data|truncatechars:120|default:"Опытный специалист" }}
+                                        {{ employee.personal_data|truncatechars:250|default:"Опытный специалист" }}
                                     </p>
                                 </div>
                             </div>

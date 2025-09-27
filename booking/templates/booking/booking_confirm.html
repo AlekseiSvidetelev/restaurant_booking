@@ -13,7 +13,7 @@
                 </div>
                 <div class="card-body bg-secondary bg-opacity-10">
                     {% if booking_params and table and start_time %}
-                    <!-- Детали бронирования -->
+
                     <div class="card bg-dark border-0 mb-4">
                         <div class="card-body">
                             <h5 class="card-title text-light">Детали бронирования</h5>
@@ -35,14 +35,9 @@
                             </div>
                             <div class="row mb-2">
                                 <div class="col-5 text-muted">Стол:</div>
-                                <div class="col-7 text-light">№{{ table.number }} ({{ table.seats }} мест, {{ table.get_table_type_display }})</div>
+                                <div class="col-7 text-light">№{{ table.number }}, {{ table.get_table_type_display }}</div>
                             </div>
-                            {% if table.price_per_hour %}
-                            <div class="row">
-                                <div class="col-5 text-muted">Стоимость:</div>
-                                <div class="col-7 text-light">{{ table.price_per_hour }} руб./час</div>
-                            </div>
-                            {% endif %}
+
                         </div>
                     </div>
 
@@ -50,21 +45,21 @@
                     <form method="post">
                         {% csrf_token %}
 
-                        <!-- Скрытые поля для передачи параметров -->
+
                         <input type="hidden" name="reservation_date" value="{{ booking_params.reservation_date }}">
                         <input type="hidden" name="start_time" value="{{ booking_params.start_time }}">
                         <input type="hidden" name="guests_count" value="{{ booking_params.guests_count }}">
                         <input type="hidden" name="duration" value="{{ booking_params.duration }}">
                         <input type="hidden" name="table" value="{{ table.id }}">
 
-                        <!-- Поле для особых пожеланий -->
+
                         <div class="mb-4">
                             <label for="special_requests" class="form-label text-light">Особые пожелания</label>
                             <textarea class="form-control" id="special_requests" name="special_requests" rows="3"
                                       placeholder="Например: детский стул, аллергия на орехи и т.д."></textarea>
                         </div>
 
-                        <!-- Кнопки действий -->
+
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary py-2">
                                 <i class="bi bi-check-circle me-2"></i>Подтвердить бронирование

@@ -12,7 +12,7 @@
             <div class="card card-glass mb-4">
                 <div class="card-body">
                     <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
-                        <h1 class="h4 mb-0">{{ object.first_name }} {{ object.last_name }}</h1>
+                        <h1 class="h4 mb-0">{{ object.user.first_name }} {{ object.user.last_name }}</h1>
                         <span class="badge bg-secondary">{{ object.get_post_display }}</span>
                     </div>
 
@@ -57,6 +57,12 @@
                         <div class="col-sm-4">Дата приёма:</div>
                         <div class="col-sm-8 text-white">
                             {{ object.date_employment|date:"d.m.Y"|default:"—" }}
+                        </div>
+
+                        <!-- Email -->
+                        <div class="col-sm-4">Email:</div>
+                        <div class="col-sm-8 text-white">
+                            {{ object.user.email }}
                         </div>
 
                         <!-- Личные данные -->
